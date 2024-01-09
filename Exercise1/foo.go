@@ -12,10 +12,19 @@ var i = 0
 
 func incrementing() {
     //TODO: increment i 1000000 times
+
+    for b := 0; b < 1000000; b++ {
+        i += 1
+    }
+    return 
 }
 
 func decrementing() {
     //TODO: decrement i 1000000 times
+    for b := 0; b < 1000000; b++ {
+        i -= 1
+    }
+    return 
 }
 
 func main() {
@@ -23,6 +32,8 @@ func main() {
     runtime.GOMAXPROCS(2)    
 	
     // TODO: Spawn both functions as goroutines
+    go incrementing()
+    go decrementing()
 	
     // We have no direct way to wait for the completion of a goroutine (without additional synchronization of some sort)
     // We will do it properly with channels soon. For now: Sleep.
