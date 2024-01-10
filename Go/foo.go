@@ -3,40 +3,67 @@
 package main
 
 import (
-    . "fmt"
-    "runtime"
-    "time"
+	"fmt"
+	"runtime"
+	"sync"
 )
 
 var i = 0
+var wg sync.WaitGroup
+var lock sync.Mutex
 
-func incrementing() {
-    //TODO: increment i 1000000 times
-
-    for b := 0; b < 1000000; b++ {
-        i += 1
-    }
-    return 
+func incrementing(ch chan bool) {
+	for b := 0; b < 1000000; b++ {
+		lock.Lock()
+		i += 1
+		lock.Unlock()
+	}
+	ch <- true
 }
 
-func decrementing() {
-    //TODO: decrement i 1000000 times
-    for b := 0; b < 1000000; b++ {
-        i -= 1
-    }
-    return 
+func decrementing(ch chan bool) {
+	for b := 0; b < 1000000; b++ {
+		lock.Lock()
+		i -= 1
+		lock.Unlock()
+	}
+	ch <- true
 }
 
 func main() {
-    // What does GOMAXPROCS do? What happens if you set it to 1?
-    runtime.GOMAXPROCS(2)    
-	
-    // TODO: Spawn both functions as goroutines
-    go incrementing()
-    go decrementing()
-	
-    // We have no direct way to wait for the completion of a goroutine (without additional synchronization of some sort)
-    // We will do it properly with channels soon. For now: Sleep.
-    time.Sleep(500*time.Millisecond)
-    Println("The magic number is:", i)
+	runtime.GOMAXPROCS(2)
+
+	// Increment the wait group counter
+	wg.Add(2)
+
+	// Create a channel to signal completion of each goroutine
+	ch := make(chan bool, 2)
+
+	// Spawn both functions as goroutines
+	go func() {
+		defer wg.Done()
+		incrementing(ch)
+	}()
+
+	go func() {
+		defer wg.Done()
+		decrementing(ch)
+	}()
+
+	// Use select to wait for any channel to receive a value
+	select {
+	case <-ch:
+		// One channel received a value
+
+		// Use select again to wait for the second channel to receive a value
+		select {
+		case <-ch:
+			// Both channels received values
+		}
+	}
+
+	// Close the channel to signal that all goroutines have completed
+	close(ch)
+
+	fmt.Println("The magic number is:", i)
 }
