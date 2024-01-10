@@ -4,10 +4,10 @@ Exercise 1 - Theory questions
 ### Concepts
 
 What is the difference between *concurrency* and *parallelism*?
-> *Your answer here*
+> Concurrency is the illusion of parallelism, but several tasks are not really executed at the same time. It does not finish one task before starting on another task, and that is why it seems like the tasks are executed at the same time. In reality it switches back and forth between threads.
 
 What is the difference between a *race condition* and a *data race*? 
-> *Your answer here* 
+> A race condition happens when the order of when tasks are executed affects the results and the correctness. Data race 
  
 *Very* roughly - what does a *scheduler* do, and how does it do it?
 > *Your answer here* 
