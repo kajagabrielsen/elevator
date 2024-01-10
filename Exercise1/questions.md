@@ -7,10 +7,10 @@ What is the difference between *concurrency* and *parallelism*?
 > Concurrency is the illusion of parallelism, but several tasks are not really executed at the same time. It does not finish one task before starting on another task, and that is why it seems like the tasks are executed at the same time. In reality it switches back and forth between threads.
 
 What is the difference between a *race condition* and a *data race*? 
-> A race condition happens when the order of when tasks are executed affects the results and the correctness. Data race 
+> A race condition happens when the order of when tasks are executed affects the results and the correctness. Data race is a type of race condition that happens when several threads access data at the same time. 
  
 *Very* roughly - what does a *scheduler* do, and how does it do it?
-> *Your answer here* 
+> A scheduler has the resposibility for managing the execution of tasks. It plays an important role in achieving concurrency and multitasking by delegating the roles to the CPU.
 
 
 ### Engineering
