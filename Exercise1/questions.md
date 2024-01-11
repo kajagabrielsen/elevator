@@ -16,15 +16,15 @@ What is the difference between a *race condition* and a *data race*?
 ### Engineering
 
 Why would we use multiple threads? What kinds of problems do threads solve?
-> *Your answer here*
+> by using threads we can switch between different functions, in the middle of the functions process, without loosing data. 
 
 Some languages support "fibers" (sometimes called "green threads") or "coroutines"? What are they, and why would we rather use them over threads?
-> *Your answer here*
+> fibers are threads that you split in to several tasks, making them lighter weight and more efficient in certaint situations. 
 
 Does creating concurrent programs make the programmer's life easier? Harder? Maybe both?
-> *Your answer here*
+> this will make it more difficult to code, but the system will run more efficiently, so both
 
 What do you think is best - *shared variables* or *message passing*?
-> *Your answer here*
+> we think shared variables were easier to understand
 
 
