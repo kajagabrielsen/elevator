@@ -6,15 +6,15 @@ import (
 )
 
 func main() {
-	localPort := 34933 // Replace with the port you want to listen on
-	serverIP := "127.0.0.1"
+	localPort := 20010 // Replace with the port you want to listen on
+	clientIP := getLocalIP()
 
 	// Start the server in a separate goroutine
 	go startServer(localPort)
 
 	// Connect to the TCP server
 	serverPort := 34933 // Change this to the port your server is listening on
-	clientIP := getLocalIP()
+	serverIP := "10.100.23.129"
 	connectBackMessage := fmt.Sprintf("Connect to: %s:%d\x00", clientIP, localPort)
 	connectToServer(serverIP, serverPort, connectBackMessage)
 }
