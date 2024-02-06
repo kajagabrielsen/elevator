@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
+	"net"
+	"os/exec"
+	"strconv"
 	"sync"
-	"syscall"
 	"time"
 )
 
@@ -14,44 +14,48 @@ var (
 	backupLock sync.Mutex
 )
 
-func primary() {
+func counter() {
+
+	localhost, _ := net.ResolveUDPAddr("udp", "localhost:36243")
+	udpsocket, _ := net.ListenUDP("udp", localhost)
+	remoteIP := "localhost"
+	remotePort := 36243
+	i := 0
+
 	for {
+		buffer := make([]byte, 1024)
+		udpsocket.SetReadDeadline(time.Now().Add(2 * time.Second))
+
+		numBytesReceived, _, err := udpsocket.ReadFromUDP(buffer)
+		receivedData := string(buffer[:numBytesReceived])
+		if err != nil {
+			break
+		}
+
+		i, _ = strconv.Atoi(receivedData)
+
+	}
+
+	exec.Command("gnome-terminal", "--", "go", "run", "pp.go").Run()
+
+	for {
+
 		// Print and increment the count
-		fmt.Println(count)
-		count++
+		fmt.Println(i)
+		i++
+
+		addr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("%s:%d", remoteIP, remotePort))
+		sendSock, _ := net.DialUDP("udp", nil, addr)
+
+		// Send the message
+		_, _ = sendSock.Write([]byte(string(i)))
 
 		// Simulate some work
 		time.Sleep(time.Second)
 	}
-}
 
-func backup() {
-	// Monitor the primary process
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT)
-
-	for {
-		<-ch
-		// Primary process has terminated, become the new primary
-		backupLock.Lock()
-		go primary()
-		backupLock.Unlock()
-
-		// Create a new backup
-		go backup()
-	}
 }
 
 func main() {
-	// Start the primary process
-	go primary()
-
-	// Start the backup process
-	go backup()
-
-	// Wait for termination signal
-	terminate := make(chan os.Signal, 1)
-	signal.Notify(terminate, syscall.SIGTERM, syscall.SIGINT)
-	<-terminate
+	go counter()
 }
-
