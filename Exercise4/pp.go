@@ -35,6 +35,7 @@ func counter() {
 		i, _ = strconv.Atoi(receivedData)
 
 	}
+	udpsocket.Close()
 
 	exec.Command("gnome-terminal", "--", "go", "run", "pp.go").Run()
 
@@ -48,7 +49,7 @@ func counter() {
 		sendSock, _ := net.DialUDP("udp", nil, addr)
 
 		// Send the message
-		_, _ = sendSock.Write([]byte(string(i)))
+		_, _ = sendSock.Write([]byte(strconv.Itoa(i)))
 
 		// Simulate some work
 		time.Sleep(time.Second)
@@ -57,5 +58,5 @@ func counter() {
 }
 
 func main() {
-	go counter()
+	counter()
 }
