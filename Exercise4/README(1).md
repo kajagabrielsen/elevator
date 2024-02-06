@@ -17,12 +17,15 @@ The process pair mechanism on its own forms one of the three parts of making bug
 Some engineering questions, before you continue:
 
 - Why would we aim to detect success in results, instead of the more classical way of detecting errors/failures?
+It may be easier to check if everything is going as expected, rather than if something is missing. Often when we have crashes and failures, it is a loss of information insted of wrong information.
 - Why would we want to self-terminate, instead of handling the error immediately in the "primary" (as opposed to deferring it to the backup as it "spins up")?
+Often you dont know where the failure is when you detect success instead of errors. One great solution for this is full restart or undo and try again instead of searching for the error and then take care of it.
 - Is there any reason to prefer a process pair style, as opposed to making a separate supervisor-like program whose sole purpose is to restart the main program?
+When we use a supervisor, some information can get lost when the main program is dead and we have to wait for the supervisor to restart it. Process pair style would be more seamless because the backup takes over immediately.
 
 ---
 
-Create a program (in any language, on any OS) that uses the process pair technique to print the numbers `1`, `2`, `3`, `4`, etc. to a terminal window. The program should create its own backup: When the primary is running, only the primary should keep counting, and the backup should do nothing. When the primary dies, the backup should become the new primary, create its own new backup, and keep counting where the dead one left off. Make sure that no numbers are skipped!
+process pair technique to print the numbers `1`, `2`, `3`, `4`, etc. to a terminal window. The program should create its own backup: When the primary is running, only the primary should keep counting, and the backup should do nothing. When the primary dies, the backup should become the new primary, create its own new backup, and keep counting where the dead one left off. Make sure that no numbers are skipped!
 
 View a demo of process pairs in action (YouTube) (https://youtu.be/HCgj9pqrTW4)
 
