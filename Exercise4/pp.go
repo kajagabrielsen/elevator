@@ -2,61 +2,56 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
-	"os/exec"
+	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 )
 
-const backupFile = "backup.txt"
+var (
+	count      int
+	backupLock sync.Mutex
+)
 
-func programA() {
-	fmt.Println("Program A is running...")
+func primary() {
+	for {
+		// Print and increment the count
+		fmt.Println(count)
+		count++
 
-	// Simulate some work
-	time.Sleep(5 * time.Second)
-
-	fmt.Println("Program A terminates.")
+		// Simulate some work
+		time.Sleep(time.Second)
+	}
 }
 
-func programB() {
-	fmt.Println("Program B is starting Program A...")
+func backup() {
+	// Monitor the primary process
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT)
 
-	// Start Program A
-	cmd := exec.Command("go", "run", "programA.go")
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Error starting Program A:", err)
-	}
+	for {
+		<-ch
+		// Primary process has terminated, become the new primary
+		backupLock.Lock()
+		go primary()
+		backupLock.Unlock()
 
-	// Communication with Program A
-	data := "Hello from Program B!"
-	err = ioutil.WriteFile(backupFile, []byte(data), 0644)
-	if err != nil {
-		fmt.Println("Error writing to backup file:", err)
+		// Create a new backup
+		go backup()
 	}
 }
 
 func main() {
-	for {
-		// Check if the primary process is running
-		_, err := os.Stat(backupFile)
-		isPrimary := err == nil
+	// Start the primary process
+	go primary()
 
-		if isPrimary {
-			// Primary loop for doing work
-			fmt.Println("Program A (Primary) is running...")
+	// Start the backup process
+	go backup()
 
-			// Simulate some work
-			time.Sleep(3 * time.Second)
-
-		} else {
-			// Create a new backup
-			fmt.Println("Primary not found. Creating a new backup (Program B)...")
-			go programB()
-
-			// Wait for the backup to be created
-			time.Sleep(1 * time.Second)
-		}
-	}
+	// Wait for termination signal
+	terminate := make(chan os.Signal, 1)
+	signal.Notify(terminate, syscall.SIGTERM, syscall.SIGINT)
+	<-terminate
 }
+
