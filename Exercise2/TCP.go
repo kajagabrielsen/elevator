@@ -14,7 +14,7 @@ func main() {
 
 	// Connect to the TCP server
 	serverPort := 34933 // Change this to the port your server is listening on
-	serverIP := "10.100.23.129"
+	serverIP := "10.100.23.186"
 	connectBackMessage := fmt.Sprintf("Connect to: %s:%d\x00", clientIP, localPort)
 	connectToServer(serverIP, serverPort, connectBackMessage)
 }
