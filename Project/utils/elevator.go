@@ -1,11 +1,11 @@
-package main
+package utils
 
 import (
 	"fmt"
 )
 
 // ebToString converts ElevatorBehaviour to a string.
-func ebToString(eb ElevatorBehaviour) string {
+func EbToString(eb ElevatorBehaviour) string {
 	switch eb {
 	case EB_Idle:
 		return "EB_Idle"
@@ -19,7 +19,7 @@ func ebToString(eb ElevatorBehaviour) string {
 }
 
 // elevatorPrint prints the state of the elevator.
-func elevatorPrint(es Elevator) {
+func ElevatorPrint(es Elevator) {
 	fmt.Println("  +--------------------+")
 	fmt.Printf(
 		"  |floor = %-2d          |\n"+
@@ -27,7 +27,7 @@ func elevatorPrint(es Elevator) {
 			"  |behav = %-12.12s|\n",
 		es.Floor,
 		"", // Replace with the Go equivalent of elevio_dirn_toString(es.Dirn)
-		ebToString(es.Behaviour),
+		EbToString(es.Behaviour),
 	)
 	fmt.Println("  +--------------------+")
 	fmt.Println("  |  | up  | dn  | cab |")
@@ -47,7 +47,7 @@ func elevatorPrint(es Elevator) {
 }
 
 // elevatorUninitialized initializes and returns an uninitialized elevator.
-func elevatorUninitialized() Elevator {
+func ElevatorUninitialized() Elevator {
 	return Elevator{
 		Floor:     -1,
 		Dirn:      D_Stop,

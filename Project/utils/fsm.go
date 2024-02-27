@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ var (
 )
 
 func init() {
-	elevator = elevatorUninitialized()
+	elevator = ElevatorUninitialized()
 
 	// Load configuration from your config.go file or define them here directly
 	// elevator.Config = ElevatorConfig{
@@ -23,7 +23,7 @@ func init() {
 	outputDevice = GetOutputDevice()
 }
 
-func setAllLights(es Elevator) {
+func SetAllLights(es Elevator) {
 	for floor := 0; floor < N_FLOORS; floor++ {
 		for btn := 0; btn < N_BUTTONS; btn++ {
 			var BTN elevio.ButtonType = elevio.ButtonType(btn)
@@ -32,20 +32,20 @@ func setAllLights(es Elevator) {
 	}
 }
 
-func fsmOnInitBetweenFloors() {
+func FsmOnInitBetweenFloors() {
 	outputDevice.MotorDirection(elevio.MD_Down)
 	elevator.Dirn = D_Down
 	elevator.Behaviour = EB_Moving
 }
 
-func fsmOnRequestButtonPress(btnFloor int, btnType Button) {
+func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 	fmt.Printf("\n\n%s(%d, %s)\n", "fsmOnRequestButtonPress", btnFloor, ButtonToString(btnType))
-	elevatorPrint(elevator)
+	ElevatorPrint(elevator)
 
 	switch elevator.Behaviour {
 	case EB_DoorOpen:
-		if requestsShouldClearImmediately(elevator, btnFloor, btnType) {
-			timer_start(elevator.DoorOpenDuration_s)
+		if RequestsShouldClearImmediately(elevator, btnFloor, btnType) {
+			Timer_start(elevator.DoorOpenDuration_s)
 		} else {
 			elevator.Requests[btnFloor][btnType] = true
 		}
@@ -57,14 +57,14 @@ func fsmOnRequestButtonPress(btnFloor int, btnType Button) {
 
 	case EB_Idle:
 		elevator.Requests[btnFloor][btnType] = true
-		pair := requests_chooseDirection(elevator)
+		pair := Requests_chooseDirection(elevator)
 		elevator.Dirn = pair.Dirn
 		elevator.Behaviour = pair.Behaviour
 		switch pair.Behaviour {
 		case EB_DoorOpen:
 			outputDevice.DoorLight(true)
-			timer_start(elevator.DoorOpenDuration_s)
-			elevator = requestsClearAtCurrentFloor(elevator)
+			Timer_start(elevator.DoorOpenDuration_s)
+			elevator = RequestsClearAtCurrentFloor(elevator)
 			break
 
 		case EB_Moving:
@@ -78,15 +78,15 @@ func fsmOnRequestButtonPress(btnFloor int, btnType Button) {
 		break
 	}
 
-	setAllLights(elevator)
+	SetAllLights(elevator)
 
 	fmt.Println("\nNew state:")
-	elevatorPrint(elevator)
+	ElevatorPrint(elevator)
 }
 
-func fsmOnFloorArrival(newFloor int) {
+func FsmOnFloorArrival(newFloor int) {
 	fmt.Printf("\n\n%s(%d)\n", "fsmOnFloorArrival", newFloor)
-	elevatorPrint(elevator)
+	ElevatorPrint(elevator)
 
 	elevator.Floor = newFloor
 
@@ -94,12 +94,12 @@ func fsmOnFloorArrival(newFloor int) {
 
 	switch elevator.Behaviour {
 	case EB_Moving:
-		if requestsShouldStop(elevator) {
+		if RequestsShouldStop(elevator) {
 			outputDevice.MotorDirection(D_Stop)
 			outputDevice.DoorLight(true)
-			elevator = requestsClearAtCurrentFloor(elevator)
-			timer_start(elevator.DoorOpenDuration_s)
-			setAllLights(elevator)
+			elevator = RequestsClearAtCurrentFloor(elevator)
+			Timer_start(elevator.DoorOpenDuration_s)
+			SetAllLights(elevator)
 			elevator.Behaviour = EB_DoorOpen
 		}
 		break
@@ -108,24 +108,24 @@ func fsmOnFloorArrival(newFloor int) {
 	}
 
 	fmt.Println("\nNew state:")
-	elevatorPrint(elevator)
+	ElevatorPrint(elevator)
 }
 
-func fsmOnDoorTimeout() {
+func FsmOnDoorTimeout() {
 	fmt.Printf("\n\n%s()\n", "fsmOnDoorTimeout")
-	elevatorPrint(elevator)
+	ElevatorPrint(elevator)
 
 	switch elevator.Behaviour {
 	case EB_DoorOpen:
-		pair := requests_chooseDirection(elevator)
+		pair := Requests_chooseDirection(elevator)
 		elevator.Dirn = pair.Dirn
 		elevator.Behaviour = pair.Behaviour
 
 		switch elevator.Behaviour {
 		case EB_DoorOpen:
-			timer_start(elevator.DoorOpenDuration_s)
-			elevator = requestsClearAtCurrentFloor(elevator)
-			setAllLights(elevator)
+			Timer_start(elevator.DoorOpenDuration_s)
+			elevator = RequestsClearAtCurrentFloor(elevator)
+			SetAllLights(elevator)
 			break
 		case EB_Moving:
 		case EB_Idle:
@@ -141,7 +141,7 @@ func fsmOnDoorTimeout() {
 	}
 
 	fmt.Println("\nNew state:")
-	elevatorPrint(elevator)
+	ElevatorPrint(elevator)
 }
 
 // You need to implement the missing functions such as elevatorUninitialized,

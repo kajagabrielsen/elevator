@@ -1,4 +1,4 @@
-package main
+package utils
 
 func RequestsAbove(e Elevator) bool {
 	for f := e.Floor + 1; f < N_FLOORS; f++ {
@@ -31,7 +31,7 @@ func RequestsHere(e Elevator) bool {
 	return false
 }
 
-func requests_chooseDirection(e Elevator) DirnBehaviourPair {
+func Requests_chooseDirection(e Elevator) DirnBehaviourPair {
 	switch e.Dirn {
 	case D_Up:
 		if RequestsAbove(e) {
@@ -68,7 +68,7 @@ func requests_chooseDirection(e Elevator) DirnBehaviourPair {
 	}
 }
 
-func requestsShouldStop(e Elevator) bool {
+func RequestsShouldStop(e Elevator) bool {
 	switch e.Dirn {
 	case D_Down:
 		return e.Requests[e.Floor][B_HallDown] ||
@@ -85,7 +85,7 @@ func requestsShouldStop(e Elevator) bool {
 	return true
 }
 
-func requestsShouldClearImmediately(e Elevator, btnFloor int, btnType Button) bool {
+func RequestsShouldClearImmediately(e Elevator, btnFloor int, btnType Button) bool {
 	switch e.ClearRequestVariant {
 	case CV_All:
 		return e.Floor == btnFloor
@@ -100,7 +100,7 @@ func requestsShouldClearImmediately(e Elevator, btnFloor int, btnType Button) bo
 	}
 }
 
-func requestsClearAtCurrentFloor(e Elevator) Elevator {
+func RequestsClearAtCurrentFloor(e Elevator) Elevator {
 	switch e.ClearRequestVariant {
 	case CV_All:
 		for btn := 0; btn < N_BUTTONS; btn++ {
