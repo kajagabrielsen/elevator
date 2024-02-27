@@ -2,29 +2,38 @@ package main
 
 import (
 	"Elevator/driver-go-master/elevio"
+	"Elevator/utils"
 	"fmt"
 	"time"
 )
 
 func main() {
 	fmt.Print("started")
-	var inputPollRate_ms int = inputPollRate
+	var inputPollRate_ms int = utils.InputPollRate
 
-	input := elevio.GetInputDevice()
+	input := utils.GetInputDevice()
 
-	if input.FloorSensor() == -1 {
-		fsmOnInitBetweenFloors()
+	floorCh := make(chan int)
+
+	// Call the FloorSensor function with the channel
+	input.FloorSensor(floorCh)
+
+	// Receive the floor value from the channel
+	currentFloor := <-floorCh
+
+	if currentFloor == -1 {
+		utils.FsmOnInitBetweenFloors()
 	}
 
 	for {
 		// Request button
-		prev := make([][N_BUTTONS]int, N_FLOORS)
-		for f := 0; f < N_FLOORS; f++ {
-			for b := 0; b < N_BUTTONS; b++ {
+		prev := make([][utils.N_BUTTONS]bool, utils.N_FLOORS)
+		for f := 0; f < utils.N_FLOORS; f++ {
+			for b := 0; b < utils.N_BUTTONS; b++ {
 				v := input.RequestButton(f, elevio.ButtonType(b))
-				if v != 0 && v != prev[f][b] {
-					var BType Button = Button(elevio.ButtonType(b))
-					fsmOnRequestButtonPress(f, BType)
+				if v && v != prev[f][b] {
+					var BType utils.Button = utils.Button(elevio.ButtonType(b))
+					utils.FsmOnRequestButtonPress(f, BType)
 				}
 				prev[f][b] = v
 			}
@@ -32,16 +41,16 @@ func main() {
 
 		// Floor sensor
 		var prev_floor int = -1
-		f := input.FloorSensor()
+		f := currentFloor
 		if f != -1 && f != prev_floor {
-			fsmOnFloorArrival(f)
+			utils.FsmOnFloorArrival(f)
 		}
 		prev_floor = f
 
 		// Timer
-		if timer_timedOut() {
-			timer_stop()
-			fsmOnDoorTimeout()
+		if utils.Timer_timedOut() {
+			utils.Timer_stop()
+			utils.FsmOnDoorTimeout()
 		}
 
 		time.Sleep(time.Duration(inputPollRate_ms) * time.Millisecond)

@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"Elevator/driver-go-master/elevio"
@@ -8,15 +8,15 @@ func Init(addr string, numFloors int) {
 	elevio.Init(addr, numFloors)
 }
 
-func wrapRequestButton(floor int, button elevio.ButtonType) bool {
+func WrapRequestButton(floor int, button elevio.ButtonType) bool {
 	return elevio.GetButton(button, floor)
 }
 
-func wrapRequestButtonLight(floor int, button elevio.ButtonType, value bool) {
+func WrapRequestButtonLight(floor int, button elevio.ButtonType, value bool) {
 	elevio.SetButtonLamp(button, floor, value)
 }
 
-func wrapMotorDirection(direction elevio.MotorDirection) {
+func WrapMotorDirection(direction elevio.MotorDirection) {
 	elevio.SetMotorDirection(direction)
 }
 
@@ -24,7 +24,7 @@ func wrapMotorDirection(direction elevio.MotorDirection) {
 func GetInputDevice() ElevInputDevice {
 	return ElevInputDevice{
 		FloorSensor:   elevio.PollFloorSensor,//elevatorHardwareGetFloorSensorSignal,
-		RequestButton: wrapRequestButton,
+		RequestButton: WrapRequestButton,
 		StopButton:    elevio.PollStopButton,//elevatorHardwareGetStopSignal,
 		Obstruction:   elevio.PollObstructionSwitch,//elevatorHardwareGetObstructionSignal,
 	}
@@ -34,10 +34,10 @@ func GetInputDevice() ElevInputDevice {
 func GetOutputDevice() ElevOutputDevice {
 	return ElevOutputDevice{
 		FloorIndicator:     elevio.SetFloorIndicator,//elevatorHardwareSetFloorIndicator,
-		RequestButtonLight: wrapRequestButtonLight,
+		RequestButtonLight: WrapRequestButtonLight,
 		DoorLight:          elevio.SetDoorOpenLamp,//elevatorHardwareSetDoorOpenLamp,
 		StopButtonLight:    elevio.SetStopLamp,//elevatorHardwareSetStopLamp,
-		MotorDirection:     wrapMotorDirection,
+		MotorDirection:     WrapMotorDirection,
 	}
 }
 

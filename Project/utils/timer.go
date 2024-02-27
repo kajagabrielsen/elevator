@@ -1,4 +1,4 @@
-package main
+package utils
 
 import "time"
 
@@ -7,22 +7,22 @@ var (
 	timerActive  bool
 )
 
-func get_wall_time() float64 {
+func Get_wall_time() float64 {
 	seconds := time.Now().Unix()
 	millisec := time.Now().UnixMilli()
 
 	return float64(seconds) + float64(millisec)
 }
 
-func timer_start(duration float64) {
-	timerEndTime = get_wall_time() + duration
+func Timer_start(duration float64) {
+	timerEndTime = Get_wall_time() + duration
 	timerActive = true
 }
 
-func timer_stop() {
+func Timer_stop() {
 	timerActive = false
 }
 
-func timer_timedOut() bool {
-	return (timerActive && get_wall_time() > timerEndTime)
+func Timer_timedOut() bool {
+	return (timerActive && Get_wall_time() > timerEndTime)
 }

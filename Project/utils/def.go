@@ -1,17 +1,14 @@
-package main
+package utils
 
 import (
-	"fmt"
-	"os"
-	"strings"
 	"Elevator/driver-go-master/elevio"
 )
 
 // Configuration values
 var (
-	clearRequestVariant = "CV_InDirn"
-	doorOpenDuration    = 3.0
-	inputPollRate       = 25
+	ClearRequestVariantString = "CV_InDirn"
+	DoorOpenDuration    = 3.0
+	InputPollRate       = 25
 )
 
 
@@ -37,11 +34,12 @@ const (
 )
 
 type ElevInputDevice struct {
-	FloorSensor    func(chan<- int) 
+	FloorSensor    func(chan<- int)
 	RequestButton  func(int, elevio.ButtonType) bool
 	StopButton     func(chan<- bool)
 	Obstruction    func(chan<- bool)
 }
+
 
 type ElevOutputDevice struct {
 	FloorIndicator     func(int)
@@ -59,10 +57,10 @@ const (
 	EB_Moving
 )
 
-type ClearRequestVariant int
+type ClearRequestVariantInt int
 
 const (
-	CV_All ClearRequestVariant = iota
+	CV_All ClearRequestVariantInt = iota
 	CV_InDirn
 )
 
@@ -71,7 +69,7 @@ type Elevator struct {
 	Dirn                 Dirn
 	Requests             [N_FLOORS][N_BUTTONS]bool
 	Behaviour            ElevatorBehaviour
-	ClearRequestVariant  ClearRequestVariant
+	ClearRequestVariant  ClearRequestVariantInt
 	DoorOpenDuration_s   float64
 }
 
