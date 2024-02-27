@@ -7,9 +7,10 @@ import (
 	"time"
 )
 
-
 func main() {
 	fmt.Print("started")
+
+	elevio.Init("localhost:15657", 4)
 	var inputPollRate_ms int = utils.InputPollRate
 
 	input := utils.GetInputDevice()

@@ -53,9 +53,11 @@ func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 
 	case EB_Moving:
 		elevator.Requests[btnFloor][btnType] = true
+		fmt.Printf("move")
 		break
 
 	case EB_Idle:
+		fmt.Printf("idle")
 		elevator.Requests[btnFloor][btnType] = true
 		pair := Requests_chooseDirection(elevator)
 		elevator.Dirn = pair.Dirn
