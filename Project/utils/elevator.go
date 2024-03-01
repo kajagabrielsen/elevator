@@ -26,7 +26,7 @@ func ElevatorPrint(es Elevator) {
 			"  |dirn  = %-12.12s|\n"+
 			"  |behav = %-12.12s|\n",
 		es.Floor,
-		"", // Replace with the Go equivalent of elevio_dirn_toString(es.Dirn)
+		DirnToString(es.Dirn), // Replace with the Go equivalent of elevio_dirn_toString(es.Dirn)
 		EbToString(es.Behaviour),
 	)
 	fmt.Println("  +--------------------+")
@@ -38,7 +38,7 @@ func ElevatorPrint(es Elevator) {
 				(f == 0 && btn == int(B_HallDown)) {
 				fmt.Print("|     ")
 			} else {
-				fmt.Print("|  -  ") // Replace with the Go equivalent for requests[f][btn]
+				fmt.Print("|", es.Requests[f][btn])  // Replace with the Go equivalent for requests[f][btn]
 			}
 		}
 		fmt.Println("|")
