@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 )
-func main(){
+func main(){       
 
     numFloors := 4
 
