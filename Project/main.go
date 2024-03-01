@@ -31,10 +31,13 @@ func main(){
 for{
     select{
     case E := <- drv_buttons:
+        fmt.Printf("button")
         utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
     case F := <- drv_floors:
+        fmt.Printf("floor")
         utils.FsmOnFloorArrival(F)
     case a := <- drv_obstr:
+        fmt.Printf("obs")
         fmt.Printf("%+v\n", a)
         if a {
             elevio.SetMotorDirection(elevio.MD_Stop)
@@ -43,6 +46,7 @@ for{
         }
         
     case a := <- drv_stop:
+        fmt.Printf("stop")
         fmt.Printf("%+v\n", a)
         for f := 0; f < numFloors; f++ {
             for b := elevio.ButtonType(0); b < 3; b++ {

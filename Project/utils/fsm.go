@@ -14,12 +14,6 @@ var (
 func init() {
 	elevator = ElevatorUninitialized()
 
-	// Load configuration from your config.go file or define them here directly
-	// elevator.Config = ElevatorConfig{
-	// 	DoorOpenDurationS: doorOpenDuration,
-	// 	ClearRequestVariant: clearRequestVariant,
-	// 	InputPollRate: inputPollRate,
-	// }
 	outputDevice = GetOutputDevice()
 }
 
@@ -44,40 +38,38 @@ func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 
 	switch elevator.Behaviour {
 	case EB_DoorOpen:
+		fmt.Printf("fsm_door")
 		if RequestsShouldClearImmediately(elevator, btnFloor, btnType) {
 			Timer_start(elevator.DoorOpenDuration_s)
 		} else {
 			elevator.Requests[btnFloor][btnType] = true
 		}
-		break
 
 	case EB_Moving:
 		elevator.Requests[btnFloor][btnType] = true
-		fmt.Printf("move")
-		break
+		fmt.Printf("fsm_move")
 
 	case EB_Idle:
-		fmt.Printf("idle")
+		fmt.Printf("fsm_idle")
 		elevator.Requests[btnFloor][btnType] = true
 		pair := Requests_chooseDirection(elevator)
 		elevator.Dirn = pair.Dirn
 		elevator.Behaviour = pair.Behaviour
 		switch pair.Behaviour {
 		case EB_DoorOpen:
+			fmt.Printf("fsm_idle_door")
 			outputDevice.DoorLight(true)
 			Timer_start(elevator.DoorOpenDuration_s)
 			elevator = RequestsClearAtCurrentFloor(elevator)
-			break
 
 		case EB_Moving:
+			fmt.Printf("fsm_idle_move")
 			var mot_dir elevio.MotorDirection = elevio.MotorDirection(elevator.Dirn)
 			outputDevice.MotorDirection(mot_dir)
-			break
 
 		case EB_Idle:
-			break
+			fmt.Printf("fsm_idle_idle")
 		}
-		break
 	}
 
 	SetAllLights(elevator)
@@ -96,6 +88,7 @@ func FsmOnFloorArrival(newFloor int) {
 
 	switch elevator.Behaviour {
 	case EB_Moving:
+		fmt.Printf("ofa_move")
 		if RequestsShouldStop(elevator) {
 			outputDevice.MotorDirection(D_Stop)
 			outputDevice.DoorLight(true)
@@ -104,7 +97,6 @@ func FsmOnFloorArrival(newFloor int) {
 			SetAllLights(elevator)
 			elevator.Behaviour = EB_DoorOpen
 		}
-		break
 	default:
 		break
 	}
@@ -119,25 +111,26 @@ func FsmOnDoorTimeout() {
 
 	switch elevator.Behaviour {
 	case EB_DoorOpen:
+		fmt.Printf("odt_door")
 		pair := Requests_chooseDirection(elevator)
 		elevator.Dirn = pair.Dirn
 		elevator.Behaviour = pair.Behaviour
 
 		switch elevator.Behaviour {
 		case EB_DoorOpen:
+			fmt.Printf("odt_door_door")
 			Timer_start(elevator.DoorOpenDuration_s)
 			elevator = RequestsClearAtCurrentFloor(elevator)
 			SetAllLights(elevator)
-			break
 		case EB_Moving:
+			fmt.Printf("odt_door_move")
 		case EB_Idle:
+			fmt.Printf("odt_door_idle")
 			outputDevice.DoorLight(false)
 			var mot_dir elevio.MotorDirection = elevio.MotorDirection(elevator.Dirn)
 			outputDevice.MotorDirection(mot_dir)
-			break
 		}
 
-		break
 	default:
 		break
 	}
@@ -146,7 +139,3 @@ func FsmOnDoorTimeout() {
 	ElevatorPrint(elevator)
 }
 
-// You need to implement the missing functions such as elevatorUninitialized,
-// elevioGetOutputDevice, timerStart, elevatorPrint, requestsShouldClearImmediately,
-// requestsChooseDirection, requestsClearAtCurrentFloor, requestsShouldStop,
-// and other related functions based on your specific implementation.
