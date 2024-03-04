@@ -54,6 +54,7 @@ for{
             }
         }
     case <- time.After(time.Millisecond*time.Duration(utils.DoorOpenDuration*1000)):
+        fmt.Printf("her igjen")
         utils.FsmOnDoorTimeout()
     }
     }
