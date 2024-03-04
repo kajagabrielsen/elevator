@@ -7,22 +7,22 @@ var (
 	timerActive  bool
 )
 
-func Get_wall_time() float64 {
+func GetWallTime() float64 {
 	seconds := time.Now().Unix()
 	millisec := time.Now().UnixMilli()
 
 	return float64(seconds) + float64(millisec)
 }
 
-func Timer_start(duration float64) {
-	timerEndTime = Get_wall_time() + duration
+func TimerStart(duration float64) {
+	timerEndTime = GetWallTime() + duration
 	timerActive = true
 }
 
-func Timer_stop() {
+func TimerStop() {
 	timerActive = false
 }
 
-func Timer_timedOut() bool {
-	return (timerActive && Get_wall_time() > timerEndTime)
+func TimerTimedOut() bool {
+	return (timerActive && GetWallTime() > timerEndTime)
 }

@@ -46,8 +46,7 @@ func ElevatorPrint(es Elevator) {
 	fmt.Println("  +--------------------+")
 }
 
-// elevatorUninitialized initializes and returns an uninitialized elevator.
-func ElevatorUninitialized() Elevator {
+func ElevatorInitialized() Elevator {
 	return Elevator{
 		Floor:     -1,
 		Dirn:      D_Stop,

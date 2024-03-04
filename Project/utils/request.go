@@ -31,7 +31,7 @@ func RequestsHere(e Elevator) bool {
 	return false
 }
 
-func Requests_chooseDirection(e Elevator) DirnBehaviourPair {
+func RequestsChooseDirection(e Elevator) DirnBehaviourPair {
 	switch e.Dirn {
 	case D_Up:
 		if RequestsAbove(e) {
