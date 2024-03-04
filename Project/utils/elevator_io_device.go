@@ -23,20 +23,20 @@ func WrapMotorDirection(direction elevio.MotorDirection) {
 // GetInputDevice returns the elevator's input device.
 func GetInputDevice() ElevInputDevice {
 	return ElevInputDevice{
-		FloorSensor:   elevio.PollFloorSensor,//elevatorHardwareGetFloorSensorSignal,
+		FloorSensor:   elevio.PollFloorSensor,
 		RequestButton: WrapRequestButton,
-		StopButton:    elevio.PollStopButton,//elevatorHardwareGetStopSignal,
-		Obstruction:   elevio.PollObstructionSwitch,//elevatorHardwareGetObstructionSignal,
+		StopButton:    elevio.PollStopButton,
+		Obstruction:   elevio.PollObstructionSwitch,
 	}
 }
 
 // GetOutputDevice returns the elevator's output device.
 func GetOutputDevice() ElevOutputDevice {
 	return ElevOutputDevice{
-		FloorIndicator:     elevio.SetFloorIndicator,//elevatorHardwareSetFloorIndicator,
+		FloorIndicator:     elevio.SetFloorIndicator,
 		RequestButtonLight: WrapRequestButtonLight,
-		DoorLight:          elevio.SetDoorOpenLamp,//elevatorHardwareSetDoorOpenLamp,
-		StopButtonLight:    elevio.SetStopLamp,//elevatorHardwareSetStopLamp,
+		DoorLight:          elevio.SetDoorOpenLamp,
+		StopButtonLight:    elevio.SetStopLamp,
 		MotorDirection:     WrapMotorDirection,
 	}
 }
