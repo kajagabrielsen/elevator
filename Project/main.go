@@ -13,7 +13,6 @@ func main(){
     elevio.Init("localhost:15657", numFloors)
     
     var d elevio.MotorDirection = elevio.MD_Up
-    //elevio.SetMotorDirection(d)
     
     drv_buttons := make(chan elevio.ButtonEvent)
     drv_floors  := make(chan int)
@@ -54,7 +53,6 @@ for{
             }
         }
     case <- time.After(time.Millisecond*time.Duration(utils.DoorOpenDuration*1000)):
-        fmt.Printf("her igjen")
         utils.FsmOnDoorTimeout()
     }
     }
