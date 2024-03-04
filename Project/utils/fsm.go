@@ -124,6 +124,9 @@ func FsmOnDoorTimeout() {
 			SetAllLights(elevator)
 		case EB_Moving:
 			fmt.Printf("odt_door_move")
+			outputDevice.DoorLight(false)
+			var mot_dir elevio.MotorDirection = elevio.MotorDirection(elevator.Dirn)
+			outputDevice.MotorDirection(mot_dir)
 		case EB_Idle:
 			fmt.Printf("odt_door_idle")
 			outputDevice.DoorLight(false)
