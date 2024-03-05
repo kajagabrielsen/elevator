@@ -1,15 +1,20 @@
 package main
 
-import "os/exec"
-import "fmt"
-import "encoding/json"
-import "runtime"
+import (
+	"Elevator/driver-go-master/elevio"
+	"encoding/json"
+	"fmt"
+	"os/exec"
+	"runtime"
+	"strconv"
+)
 
 // Struct members must be public in order to be accessible by json.Marshal/.Unmarshal
 // This means they must start with a capital letter, so we need to use field renaming struct tags to make them camelCase
 
 type HRAElevState struct {
-    Behavior    string      `json:"behaviour"`
+	ElevID 		int         `json:"id"`
+    Behaviour   string      `json:"behaviour"`
     Floor       int         `json:"floor"` 
     Direction   string      `json:"direction"`
     CabRequests []bool      `json:"cabRequests"`
@@ -20,9 +25,7 @@ type HRAInput struct {
     States          map[string]HRAElevState     `json:"states"`
 }
 
-
-
-func CalculateCostFunc(){
+func CalculateCostFunc(elevators []Elevator){
 
     hraExecutable := ""
     switch runtime.GOOS {
@@ -31,39 +34,55 @@ func CalculateCostFunc(){
         default:        panic("OS not supported")
     }
 
-    input := HRAInput{
-        HallRequests: [][2]bool{{false, false}, {true, false}, {false, false}, {false, true}},
-        States: map[string]HRAElevState{
-            "1": HRAElevState{
-				if elevator.Behavior == EB_Moving{
-					Behavior: "moving"
+
+	n_elevators =  len(elevators)
+	myStates := [n_elevators]HRAElevState{}
+	for i := 0; i < n_elevators; i++ {
+		CabCalls := [n_elevators]bool 
+		for floor := 0; floor < N_FLOORS; floor++{
+			CabCalls[floor] = elevators[i].Requests[floor][2]
+		}
+		elevastate := HRAElevState{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
+		myStates[i] = elevastate
+	}
+	
+	for 
+
+	input := HRAInput{
+		HallRequests: elevio.,
+		States: make(map[string]HRAElevState),
+	}
+
+	for _, elevatorStatus := range myStates {
+		input.States[strconv.Itoa(elevatorStatus.ElevID)] = HRAElevState{
+			Behavior : func() string {
+				if elevatorStatus.Behaviour == 0 {
+					return "idle"
 				}
-				if elevator.Behavior == EB_DoorOpen{
-					Behavior: "door open"
+				if elevatorStatus.Behaviour == 1 {
+					return "door open"
 				}
-				if elevator.Behavior == EB_Idle{
-					Behavior: "idle"
-				},
-                Floor:          elevator.Floor,
-				if elevator.Dirn == D_Down{
-					Direction: "down"
+				if myStates[0].Behaviour == 2 {
+					return "moving"
 				}
-				if elevator.Dirn == D_Stop{
-					Direction: "stop"
+			Floor : elevatorStatus.Floor
+			Direction : func() string {
+				if elevatorStatus.Dirn == -1 {
+					return "down"
 				}
-				if elevator.Dirn == D_Up{
-					Direction: "up"
-				},
-                CabRequests:    []bool{false, false, false, true},
-            },
-            "2": HRAElevState{
-                Behavior:       "idle",
-                Floor:          0,
-                Direction:      "stop",
-                CabRequests:    []bool{false, false, false, false},
-            },
-        },
-    }
+				if elevatorStatus.Dirn == 0 {
+					return "stop"
+				}
+				if elevatorStatus.Dirn == 1 {
+					return "up"
+				}
+			}
+			CabRequests : elevatorStatus.CabCalls
+				
+			}
+		}
+	}
+
 
     jsonBytes, err := json.Marshal(input)
     if err != nil {

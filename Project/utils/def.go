@@ -71,6 +71,7 @@ type Elevator struct {
 	Behaviour            ElevatorBehaviour
 	ClearRequestVariant  ClearRequestVariantInt
 	DoorOpenDuration_s   float64
+
 }
 
 type DirnBehaviourPair struct {
