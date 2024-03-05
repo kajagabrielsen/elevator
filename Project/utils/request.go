@@ -102,7 +102,7 @@ func RequestsShouldClearImmediately(e Elevator, btnFloor int, btnType Button) bo
 	}
 }
 
-/**func RequestsClearAtCurrentFloor(e Elevator) Elevator {
+func RequestsClearAtCurrentFloor(e Elevator) Elevator {
 	switch e.ClearRequestVariant {
 	case CV_All:
 		for btn := 0; btn < N_BUTTONS; btn++ {
@@ -129,8 +129,8 @@ func RequestsShouldClearImmediately(e Elevator, btnFloor int, btnType Button) bo
 	default:
 	}
 	return e
-}**/
-
+}
+/*
 func RequestsClearAtCurrentFloor(e Elevator, OnClearedRequest func(b Button, floor int)) Elevator{
 
 	switch e.ClearRequestVariant {
@@ -215,4 +215,4 @@ func TimeToServeRequest(e_old Elevator, b Button) int{
         duration += TravelTime
     }
 }
-
+*/
