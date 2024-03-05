@@ -88,6 +88,39 @@ func PollButtons(receiver chan<- ButtonEvent) {
 	}
 }
 
+func PollHall(receiver chan<- ButtonEvent) {
+	prev := make([][2]bool, _numFloors)
+	for {
+		time.Sleep(_pollRate)
+		for f := 0; f < _numFloors; f++ {
+			for b := ButtonType(0); b < 2; b++ {
+				v := GetButton(b, f)
+				if v != prev[f][b] && v {
+					receiver <- ButtonEvent{f, ButtonType(b)}
+				}
+				prev[f][b] = v
+			}
+		}
+	}
+}
+
+func PollCab(receiver chan<- ButtonEvent) {
+	prev := make([]bool, _numFloors)
+	for {
+		time.Sleep(_pollRate)
+		for f := 0; f < _numFloors; f++ {
+			for b := ButtonType(2); b < 3; b++ {
+				v := GetButton(b, f)
+				if v != prev[b] && v {
+					receiver <- ButtonEvent{f, ButtonType(b)}
+				}
+				prev[f] = v
+			}
+		}
+	}
+}
+
+
 func PollFloorSensor(receiver chan<- int) {
 	prev := -1
 	for {
