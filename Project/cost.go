@@ -34,6 +34,43 @@ type HRAInput struct {
     States          map[string]HRAElevState     `json:"states"`
 }
 
+func GetHallCalls(elevators []utils.Elevator) [][2]bool{	
+	var n_elevators int = len(elevators)
+	GlobalHallCalls := [][2]bool{}
+	for floor := 0; floor < utils.N_FLOORS; floor++{
+		HallCalls := [2]bool{}
+		up := false
+		down := false
+		for i := 0; i < n_elevators; i++ {
+			if elevators[i].Requests[floor][0] == true{
+				up = true
+			} 
+			if elevators[i].Requests[floor][1] {
+				down = true
+			}
+		}
+		HallCalls[0] = up
+		HallCalls[1] = down
+		GlobalHallCalls[floor] = HallCalls
+	}
+	return GlobalHallCalls
+}
+
+func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp{
+	var n_elevators int = len(elevators)
+	myStates := []HRAElevStatetemp{}
+	for i := 0; i < n_elevators; i++ {
+		CabCalls := []bool{} 
+		for floor := 0; floor < utils.N_FLOORS; floor++{
+			CabCalls[floor] = elevators[i].Requests[floor][2]
+		}
+		elevastate := HRAElevStatetemp{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
+		myStates[i] = elevastate
+	}
+	return myStates
+
+} 
+
 func CalculateCostFunc(elevators []utils.Elevator) HRAInput{
 
     hraExecutable := ""
@@ -41,31 +78,14 @@ func CalculateCostFunc(elevators []utils.Elevator) HRAInput{
         case "linux":   hraExecutable  = "hall_request_assigner"
         case "windows": hraExecutable  = "hall_request_assigner.exe"
         default:        panic("OS not supported")
-    }
-
-	var n_elevators int
-	n_elevators =  len(elevators)
-	myStates := []HRAElevStatetemp{}
-	GlobalHallCalls := [][2]bool{}
-	for i := 0; i < n_elevators; i++ {
-		CabCalls := []bool{} 
-		HallCalls := [2]bool{}
-		for floor := 0; floor < utils.N_FLOORS; floor++{
-			CabCalls[floor] = elevators[i].Requests[floor][2]
-			HallCalls[0] = elevators[i].Requests[floor][0]
-			HallCalls[1] = elevators[i].Requests[floor][1]
-			GlobalHallCalls[floor] = HallCalls
-		}
-		elevastate := HRAElevStatetemp{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
-		myStates[i] = elevastate
-	}
+    }	
 	
 	input := HRAInput{
-		HallRequests: GlobalHallCalls,
+		HallRequests: GetHallCalls(elevators),
 		States: make(map[string]HRAElevState),
 	}
 
-	for _, elevatorStatus := range myStates {
+	for _, elevatorStatus := range GetMyStates(elevators) {
 		input.States[strconv.Itoa(elevatorStatus.ElevID)] = HRAElevState{
 			Behaviour : func() string {
 				if elevatorStatus.Behaviour == 0 {
