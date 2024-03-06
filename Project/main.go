@@ -31,6 +31,7 @@ for{
     select{
     case E := <- drv_buttons:
         fmt.Printf("button")
+        //process and assign buttonpress functionality
         utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
     case F := <- drv_floors:
         fmt.Printf("floor")
