@@ -3,9 +3,9 @@ package main
 import (
 	//"Elevator/driver-go-master/elevio"
 	"Elevator/utils"
-	//"encoding/json"
-	//"fmt"
-	//"os/exec"
+	"encoding/json"
+	"fmt"
+	"os/exec"
 	"runtime"
 	"strconv"
 )
@@ -71,7 +71,7 @@ func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp{
 
 } 
 
-func CalculateCostFunc(elevators []utils.Elevator) HRAInput{
+func CalculateCostFunc(elevators []utils.Elevator) *map[string][][2]bool{
 
     hraExecutable := ""
     switch runtime.GOOS {
@@ -112,32 +112,35 @@ func CalculateCostFunc(elevators []utils.Elevator) HRAInput{
 
 
 
-/*
+	//Convert input to json format
     jsonBytes, err := json.Marshal(input)
     if err != nil {
         fmt.Println("json.Marshal error: ", err)
-        return
+        //return
     }
     
+	//runds the hall_request_assigner file
     ret, err := exec.Command(hraExecutable, "-i", string(jsonBytes)).CombinedOutput()
     if err != nil {
         fmt.Println("exec.Command error: ", err)
         fmt.Println(string(ret))
-        return
+        //return
     }
     
+	//convert the json received from hall_request_assigner to output
     output := new(map[string][][2]bool)
     err = json.Unmarshal(ret, &output)
     if err != nil {
         fmt.Println("json.Unmarshal error: ", err)
-        return
+        //return
     }
-        
+    
+	
     fmt.Printf("output: \n")
     for k, v := range *output {
         fmt.Printf("%6v :  %+v\n", k, v)
     }
-	*/
-	return input
+	
+	return output
 }
 
