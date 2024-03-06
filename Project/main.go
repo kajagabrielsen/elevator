@@ -11,6 +11,9 @@ func main(){
     numFloors := 4
 
     elevio.Init("localhost:15657", numFloors)
+
+    var e utils.Elevator = utils.GetElevator()
+    
     
     var d elevio.MotorDirection = elevio.MD_Up
     
