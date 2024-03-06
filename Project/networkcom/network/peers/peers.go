@@ -1,7 +1,7 @@
 package peers
 
 import (
-	"Elevator/network/conn"
+	"Elevator/networkcom/network/conn"
 	"fmt"
 	"net"
 	"sort"
