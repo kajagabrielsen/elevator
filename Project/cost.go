@@ -1,10 +1,11 @@
 package main
 
 import (
-	"Elevator/driver-go-master/elevio"
-	"encoding/json"
-	"fmt"
-	"os/exec"
+	//"Elevator/driver-go-master/elevio"
+	"Elevator/utils"
+	//"encoding/json"
+	//"fmt"
+	//"os/exec"
 	"runtime"
 	"strconv"
 )
@@ -20,12 +21,20 @@ type HRAElevState struct {
     CabRequests []bool      `json:"cabRequests"`
 }
 
+type HRAElevStatetemp struct {
+	ElevID 		int         `json:"id"`
+    Behaviour   utils.ElevatorBehaviour      `json:"behaviour"`
+    Floor       int         `json:"floor"` 
+    Direction   utils.Dirn      `json:"direction"`
+    CabRequests []bool      `json:"cabRequests"`
+}
+
 type HRAInput struct {
     HallRequests    [][2]bool                   `json:"hallRequests"`
     States          map[string]HRAElevState     `json:"states"`
 }
 
-func CalculateCostFunc(elevators []Elevator){
+func CalculateCostFunc(elevators []utils.Elevator) HRAInput{
 
     hraExecutable := ""
     switch runtime.GOOS {
@@ -34,56 +43,56 @@ func CalculateCostFunc(elevators []Elevator){
         default:        panic("OS not supported")
     }
 
-
+	var n_elevators int
 	n_elevators =  len(elevators)
-	myStates := [n_elevators]HRAElevState{}
+	myStates := []HRAElevStatetemp{}
+	GlobalHallCalls := [][2]bool{}
 	for i := 0; i < n_elevators; i++ {
-		CabCalls := [n_elevators]bool 
-		for floor := 0; floor < N_FLOORS; floor++{
+		CabCalls := []bool{} 
+		HallCalls := [2]bool{}
+		for floor := 0; floor < utils.N_FLOORS; floor++{
 			CabCalls[floor] = elevators[i].Requests[floor][2]
+			HallCalls[0] = elevators[i].Requests[floor][0]
+			HallCalls[1] = elevators[i].Requests[floor][1]
+			GlobalHallCalls[floor] = HallCalls
 		}
-		elevastate := HRAElevState{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
+		elevastate := HRAElevStatetemp{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
 		myStates[i] = elevastate
 	}
 	
-	for 
-
 	input := HRAInput{
-		HallRequests: elevio.,
+		HallRequests: GlobalHallCalls,
 		States: make(map[string]HRAElevState),
 	}
 
 	for _, elevatorStatus := range myStates {
 		input.States[strconv.Itoa(elevatorStatus.ElevID)] = HRAElevState{
-			Behavior : func() string {
+			Behaviour : func() string {
 				if elevatorStatus.Behaviour == 0 {
 					return "idle"
-				}
-				if elevatorStatus.Behaviour == 1 {
+				} else if elevatorStatus.Behaviour == 1 {
 					return "door open"
-				}
-				if myStates[0].Behaviour == 2 {
+				} else {
 					return "moving"
 				}
-			Floor : elevatorStatus.Floor
+			}(),	
+			Floor : elevatorStatus.Floor,
 			Direction : func() string {
-				if elevatorStatus.Dirn == -1 {
+				if elevatorStatus.Direction == -1 {
 					return "down"
-				}
-				if elevatorStatus.Dirn == 0 {
+				} else if elevatorStatus.Direction == 0 {
 					return "stop"
-				}
-				if elevatorStatus.Dirn == 1 {
+				} else {
 					return "up"
 				}
-			}
-			CabRequests : elevatorStatus.CabCalls
-				
-			}
+			}(),
+			CabRequests : elevatorStatus.CabRequests,	
 		}
 	}
 
 
+
+/*
     jsonBytes, err := json.Marshal(input)
     if err != nil {
         fmt.Println("json.Marshal error: ", err)
@@ -108,4 +117,7 @@ func CalculateCostFunc(elevators []Elevator){
     for k, v := range *output {
         fmt.Printf("%6v :  %+v\n", k, v)
     }
+	*/
+	return input
 }
+

@@ -10,8 +10,6 @@ func main(){
 
     numFloors := 4
 
-    id := "1"
-
     elevio.Init("localhost:15657", numFloors)
     
     var d elevio.MotorDirection = elevio.MD_Up
