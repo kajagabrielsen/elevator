@@ -17,6 +17,10 @@ func init() {
 	outputDevice = GetOutputDevice()
 }
 
+func GetElevator() Elevator{
+	return elevator
+}
+
 func SetAllLights(es Elevator) {
 	for floor := 0; floor < N_FLOORS; floor++ {
 		for btn := 0; btn < N_BUTTONS; btn++ {

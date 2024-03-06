@@ -53,5 +53,6 @@ func ElevatorInitialized() Elevator {
 		Behaviour: EB_Idle,
 		ClearRequestVariant: CV_All,
 		DoorOpenDuration_s:   3.0,
+		ID: 0,
 	}
 }
