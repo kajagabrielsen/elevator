@@ -34,7 +34,7 @@ type HRAInput struct {
     States          map[string]HRAElevState     `json:"states"`
 }
 
-func GetHallCalls(elevators []utils.Elevator) [][2]bool{	
+func GetHallCalls(elevators [utils.N_ELEVATORS]utils.Elevator) [][2]bool{	
 	var n_elevators int = len(elevators)
 	GlobalHallCalls := [][2]bool{}
 	for floor := 0; floor < utils.N_FLOORS; floor++{
@@ -56,14 +56,20 @@ func GetHallCalls(elevators []utils.Elevator) [][2]bool{
 	return GlobalHallCalls
 }
 
-func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp{
+func GetCabCalls (elevator utils.Elevator) []bool {
+//	var n_elevators int = len(elevators)
+	CabCalls := []bool{} 
+	for floor := 0; floor < utils.N_FLOORS; floor++{
+		CabCalls[floor] = elevator.Requests[floor][2]
+	}
+	return CabCalls
+}
+
+func GetMyStates(elevators [utils.N_ELEVATORS]utils.Elevator) []HRAElevStatetemp{
 	var n_elevators int = len(elevators)
 	myStates := []HRAElevStatetemp{}
 	for i := 0; i < n_elevators; i++ {
-		CabCalls := []bool{} 
-		for floor := 0; floor < utils.N_FLOORS; floor++{
-			CabCalls[floor] = elevators[i].Requests[floor][2]
-		}
+		CabCalls := GetCabCalls(elevators[i])
 		elevastate := HRAElevStatetemp{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
 		myStates[i] = elevastate
 	}
@@ -71,7 +77,7 @@ func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp{
 
 } 
 
-func CalculateCostFunc(elevators []utils.Elevator) *map[string][][2]bool{
+func CalculateCostFunc(elevators [utils.N_ELEVATORS]utils.Elevator) *map[string][][2]bool{
 
     hraExecutable := ""
     switch runtime.GOOS {

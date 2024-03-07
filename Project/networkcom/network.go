@@ -1,4 +1,4 @@
-package main
+package network
 
 import (
 	"Elevator/networkcom/network/bcast"
@@ -18,7 +18,13 @@ type HelloMsg struct {
 	Iter    int
 }
 
-func main() {
+var ListOfElevators [utils.N_ELEVATORS]utils.Elevator
+
+func GetListOfElevators () [utils.N_ELEVATORS]utils.Elevator {
+	return ListOfElevators
+}
+
+func InitNetwork() {
 	// Our id can be anything. Here we pass it on the command line, using
 	//  `go run main.go -id=our_id`
 	var id string
@@ -66,7 +72,7 @@ func main() {
 	}()
 
 	fmt.Println("Started")
-	ListOfElevators := [3]utils.Elevator{}
+	//ListOfElevators := [3]utils.Elevator{}
 
 	for {
 		select {
@@ -81,4 +87,5 @@ func main() {
 			fmt.Printf("Received: %#v\n", elev)
 		}
 	}
+
 }

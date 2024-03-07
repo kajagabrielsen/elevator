@@ -188,17 +188,7 @@ func TimeToServeRequest(e_old Elevator, b Button) int{
     duration := 0;
     
     switch(e.Behaviour){
-    case EB_Idle:
-        e.Dirn = RequestsChooseDirection(e).Dirn
-        if(e.Dirn == D_Stop){
-            return duration
-        }
-    case EB_Moving:
-        duration += TravelTime/2;
-        e.Floor += int(e.Dirn)
-    case EB_DoorOpen:
-        duration -= int(e.DoorOpenDuration_s)*1000/2;
-    }
+    case EB_Idle:elevator
 
 
     for {

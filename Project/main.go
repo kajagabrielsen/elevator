@@ -3,6 +3,8 @@ package main
 import (
 	"Elevator/driver-go-master/elevio"
 	"Elevator/utils"
+    "Elevator/hallassign"
+    //"Elevator/networkcom"
 	"fmt"
 	"time"
 )
@@ -29,12 +31,13 @@ func main(){
 
 	utils.FsmOnInitBetweenFloors()
 
+    //network.InitNetwork()
 
 for{
     select{
     case E := <- drv_buttons:
         fmt.Printf("button")
-        //process and assign buttonpress functionality
+        e.Requests = hallassign.AssignHallRequest(e)
         utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
     case F := <- drv_floors:
         fmt.Printf("floor")
