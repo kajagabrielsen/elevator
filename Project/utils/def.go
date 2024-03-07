@@ -15,6 +15,7 @@ var (
 const (
 	N_FLOORS = 4
 	N_BUTTONS = 3
+	N_ELEVATORS = 3
 )
 
 type Dirn int
