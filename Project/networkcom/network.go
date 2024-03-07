@@ -6,39 +6,35 @@ import (
 	"Elevator/networkcom/network/peers"
 	"Elevator/utils"
 	"fmt"
-	"time"
 	"os"
+	"time"
 )
 
 // We define some custom struct to send over the network.
 // Note that all members we want to transmit must be public. Any private members
-//  will be received as zero-values.
+//
+//	will be received as zero-values.
 type HelloMsg struct {
 	Elevator utils.Elevator
-	Iter    int
+	Iter     int
 }
 
 var AliveElevatorsID []string
 
-func GetAliveElevatorsID () []string{
+func GetAliveElevatorsID() []string {
 	return AliveElevatorsID
 }
 
 var ListOfElevators []utils.Elevator
 
-func GetListOfElevators () []utils.Elevator {
-	return ListOfElevators
-}
 
 func InitNetwork() {
 	// Our id can be anything. Here we pass it on the command line, using
 	//  `go run main.go -id=our_id`
 
 	var id string = os.Args[1]
-	
-	e := utils.GetElevator()
-	utils.SetElevator(e.Floor, e.Dirn, e.Requests, e.Behaviour, e.ClearRequestVariant, e.DoorOpenDuration_s, id)
 
+	
 
 
 	// var id string
@@ -76,6 +72,8 @@ func InitNetwork() {
 
 	// The example message. We just send one of these every second.
 	go func() {
+		e := utils.Elevator_glob
+		e.ID = id
 		helloMsg := HelloMsg{e, 0}
 		for {
 			helloMsg.Iter++
@@ -97,7 +95,18 @@ func InitNetwork() {
 			AliveElevatorsID = p.Peers
 
 		case elev := <-helloRx:
-			ListOfElevators = append(ListOfElevators, elev.Elevator)
+			flag := 0
+			for _, element := range ListOfElevators{
+				if element.ID == elev.Elevator.ID{
+					flag = 1
+				}
+			}
+			fmt.Println(flag)
+			if flag == 0 {
+				ListOfElevators = append(ListOfElevators, elev.Elevator)
+
+			}
+			fmt.Println("ID: hei hallo hahahhhsiogh",ListOfElevators[0].ID)
 			fmt.Printf("Received: %#v\n", elev)
 		}
 	}
