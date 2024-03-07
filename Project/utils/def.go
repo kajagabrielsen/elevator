@@ -15,7 +15,6 @@ var (
 const (
 	N_FLOORS = 4
 	N_BUTTONS = 3
-	N_ELEVATORS = 3
 )
 
 type Dirn int
@@ -72,7 +71,7 @@ type Elevator struct {
 	Behaviour            ElevatorBehaviour
 	ClearRequestVariant  ClearRequestVariantInt
 	DoorOpenDuration_s   float64
-	ID                   int
+	ID                   string
 
 }
 
