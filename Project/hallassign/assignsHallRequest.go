@@ -3,14 +3,23 @@ package hallassign
 import (
 	"Elevator/networkcom"
 	"Elevator/utils"
-	"strconv"
 )
 
-func AssignHallRequest(e utils.Elevator) [utils.N_FLOORS][utils.N_BUTTONS] bool{
+func GetIndex (key string, list []string) int{
+	for i, value := range list {
+		if value == key {
+			return i
+		}
+	}
+
+	return 0
+}
+
+func AssignHallRequest(e utils.Elevator) {
 	ListOfElevators := network.GetListOfElevators()
-	AssignedHallCalls := *CalculateCostFunc(ListOfElevators)
-	OneElevCabCalls := GetCabCalls(ListOfElevators[e.ID])
-	OneElevHallCalls := AssignedHallCalls[strconv.Itoa(e.ID)]
+	AssignedHallCalls := CalculateCostFunc(ListOfElevators)
+	OneElevCabCalls := GetCabCalls(ListOfElevators[GetIndex(e.ID,network.GetAliveElevatorsID())])
+	OneElevHallCalls := AssignedHallCalls[e.ID]
 
 	OneElevRequests := [utils.N_FLOORS][utils.N_BUTTONS] bool {}
 
@@ -19,5 +28,5 @@ func AssignHallRequest(e utils.Elevator) [utils.N_FLOORS][utils.N_BUTTONS] bool{
 		OneElevRequests[floor][1] = OneElevHallCalls[floor][1]
 		OneElevRequests[floor][2] = OneElevCabCalls[floor]
 	}
-	return OneElevRequests
+	utils.SetElevator(e.Floor, e.Dirn, OneElevRequests, e.Behaviour,e.ClearRequestVariant, e.DoorOpenDuration_s, e.ID)
 }

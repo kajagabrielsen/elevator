@@ -2,9 +2,11 @@ package main
 
 import (
 	"Elevator/driver-go-master/elevio"
+	"Elevator/hallassign"
+	"Elevator/networkcom"
 	"Elevator/utils"
-    "Elevator/hallassign"
-    //"Elevator/networkcom"
+
+	//"Elevator/networkcom"
 	"fmt"
 	"time"
 )
@@ -15,7 +17,6 @@ func main(){
     elevio.Init("localhost:15657", numFloors)
 
     var e utils.Elevator = utils.GetElevator()
-    
     
     var d elevio.MotorDirection = elevio.MD_Up
     
@@ -29,15 +30,15 @@ func main(){
     go elevio.PollObstructionSwitch(drv_obstr)
     go elevio.PollStopButton(drv_stop)
 
-	utils.FsmOnInitBetweenFloors()
+    go network.InitNetwork() //Start network
 
-    //network.InitNetwork()
+	utils.FsmOnInitBetweenFloors()
 
 for{
     select{
     case E := <- drv_buttons:
         fmt.Printf("button")
-        e.Requests = hallassign.AssignHallRequest(e)
+        hallassign.AssignHallRequest(e)
         utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
     case F := <- drv_floors:
         fmt.Printf("floor")

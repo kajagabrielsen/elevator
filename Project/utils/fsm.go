@@ -21,6 +21,16 @@ func GetElevator() Elevator{
 	return elevator
 }
 
+func SetElevator(floor int, dirn Dirn, request [N_FLOORS][N_BUTTONS]bool, behaviour ElevatorBehaviour, clear ClearRequestVariantInt, duration float64, id string) {
+	elevator.Floor = floor
+	elevator.Dirn = dirn
+	elevator.Requests = request
+	elevator.Behaviour = behaviour
+	elevator.ClearRequestVariant = clear
+	elevator.DoorOpenDuration_s = duration
+	elevator.ID = id
+}
+
 func SetAllLights(es Elevator) {
 	for floor := 0; floor < N_FLOORS; floor++ {
 		for btn := 0; btn < N_BUTTONS; btn++ {

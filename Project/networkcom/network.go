@@ -5,9 +5,9 @@ import (
 	//"Elevator/networkcom/network/localip"
 	"Elevator/networkcom/network/peers"
 	"Elevator/utils"
-	"flag"
 	"fmt"
 	"time"
+	"os"
 )
 
 // We define some custom struct to send over the network.
@@ -18,20 +18,34 @@ type HelloMsg struct {
 	Iter    int
 }
 
-var ListOfElevators [utils.N_ELEVATORS]utils.Elevator
+var AliveElevatorsID []string
 
-func GetListOfElevators () [utils.N_ELEVATORS]utils.Elevator {
+func GetAliveElevatorsID () []string{
+	return AliveElevatorsID
+}
+
+var ListOfElevators []utils.Elevator
+
+func GetListOfElevators () []utils.Elevator {
 	return ListOfElevators
 }
 
 func InitNetwork() {
 	// Our id can be anything. Here we pass it on the command line, using
 	//  `go run main.go -id=our_id`
-	var id string
-	flag.StringVar(&id, "id", "", "id of this peer")
-	flag.Parse()
 
-	// ... or alternatively, we can use the local IP address.
+	var id string = os.Args[1]
+	
+	e := utils.GetElevator()
+	utils.SetElevator(e.Floor, e.Dirn, e.Requests, e.Behaviour, e.ClearRequestVariant, e.DoorOpenDuration_s, id)
+
+
+
+	// var id string
+	// flag.StringVar(&id, "id", "", "id of this peer")
+	// flag.Parse()
+
+	// ... or alternatively, we can use the localListOfElevators IP address.
 	// (But since we can run multiple programs on the same PC, we also append the
 	//  process ID)
 	/*if id == "" {
@@ -42,7 +56,6 @@ func InitNetwork() {
 		}
 		id = fmt.Sprintf("peer-%s-%d", localIP, os.Getpid())
 	}*/
-
 	// We make a channel for receiving updates on the id's of the peers that are
 	//  alive on the network
 	peerUpdateCh := make(chan peers.PeerUpdate)
@@ -63,7 +76,7 @@ func InitNetwork() {
 
 	// The example message. We just send one of these every second.
 	go func() {
-		helloMsg := HelloMsg{utils.GetElevator(), 0}
+		helloMsg := HelloMsg{e, 0}
 		for {
 			helloMsg.Iter++
 			helloTx <- helloMsg
@@ -81,9 +94,10 @@ func InitNetwork() {
 			fmt.Printf("  Peers:    %q\n", p.Peers)
 			fmt.Printf("  New:      %q\n", p.New)
 			fmt.Printf("  Lost:     %q\n", p.Lost)
+			AliveElevatorsID = p.Peers
 
 		case elev := <-helloRx:
-			ListOfElevators[elev.Elevator.ID] = elev.Elevator
+			ListOfElevators = append(ListOfElevators, elev.Elevator)
 			fmt.Printf("Received: %#v\n", elev)
 		}
 	}
