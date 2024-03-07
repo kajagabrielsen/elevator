@@ -1,34 +1,19 @@
 package utils
 
 import (
-	"fmt"
 	"Elevator/driver-go-master/elevio"
+	"fmt"
 )
 
-
 var (
-	elevator     Elevator
-	outputDevice ElevOutputDevice
+	Elevator_glob Elevator
+	outputDevice  ElevOutputDevice
 )
 
 func init() {
-	elevator = ElevatorInitialized()
+	Elevator_glob = ElevatorInitialized()
 
 	outputDevice = GetOutputDevice()
-}
-
-func GetElevator() Elevator{
-	return elevator
-}
-
-func SetElevator(floor int, dirn Dirn, request [N_FLOORS][N_BUTTONS]bool, behaviour ElevatorBehaviour, clear ClearRequestVariantInt, duration float64, id string) {
-	elevator.Floor = floor
-	elevator.Dirn = dirn
-	elevator.Requests = request
-	elevator.Behaviour = behaviour
-	elevator.ClearRequestVariant = clear
-	elevator.DoorOpenDuration_s = duration
-	elevator.ID = id
 }
 
 func SetAllLights(es Elevator) {
@@ -42,43 +27,43 @@ func SetAllLights(es Elevator) {
 
 func FsmOnInitBetweenFloors() {
 	outputDevice.MotorDirection(elevio.MD_Down)
-	elevator.Dirn = D_Down
-	elevator.Behaviour = EB_Moving
+	Elevator_glob.Dirn = D_Down
+	Elevator_glob.Behaviour = EB_Moving
 }
 
 func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 	fmt.Printf("\n\n%s(%d, %s)\n", "fsmOnRequestButtonPress", btnFloor, ButtonToString(btnType))
-	ElevatorPrint(elevator)
+	ElevatorPrint(Elevator_glob)
 
-	switch elevator.Behaviour {
+	switch Elevator_glob.Behaviour {
 	case EB_DoorOpen:
 		fmt.Printf("fsm_door")
-		if RequestsShouldClearImmediately(elevator, btnFloor, btnType) {
-			TimerStart(elevator.DoorOpenDuration_s)
+		if RequestsShouldClearImmediately(Elevator_glob, btnFloor, btnType) {
+			TimerStart(Elevator_glob.DoorOpenDuration_s)
 		} else {
-			elevator.Requests[btnFloor][btnType] = true
+			Elevator_glob.Requests[btnFloor][btnType] = true
 		}
 
 	case EB_Moving:
-		elevator.Requests[btnFloor][btnType] = true
+		Elevator_glob.Requests[btnFloor][btnType] = true
 		fmt.Printf("fsm_move")
 
 	case EB_Idle:
 		fmt.Printf("fsm_idle")
-		elevator.Requests[btnFloor][btnType] = true
-		pair := RequestsChooseDirection(elevator)
-		elevator.Dirn = pair.Dirn
-		elevator.Behaviour = pair.Behaviour
+		Elevator_glob.Requests[btnFloor][btnType] = true
+		pair := RequestsChooseDirection(Elevator_glob)
+		Elevator_glob.Dirn = pair.Dirn
+		Elevator_glob.Behaviour = pair.Behaviour
 		switch pair.Behaviour {
 		case EB_DoorOpen:
 			fmt.Printf("fsm_idle_door")
 			outputDevice.DoorLight(true)
-			TimerStart(elevator.DoorOpenDuration_s)
-			elevator = RequestsClearAtCurrentFloor(elevator)
+			TimerStart(Elevator_glob.DoorOpenDuration_s)
+			Elevator_glob = RequestsClearAtCurrentFloor(Elevator_glob)
 
 		case EB_Moving:
 			fmt.Printf("fsm_idle_move")
-			var mot_dir elevio.MotorDirection = elevio.MotorDirection(elevator.Dirn)
+			var mot_dir elevio.MotorDirection = elevio.MotorDirection(Elevator_glob.Dirn)
 			outputDevice.MotorDirection(mot_dir)
 
 		case EB_Idle:
@@ -86,65 +71,65 @@ func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 		}
 	}
 
-	SetAllLights(elevator)
+	SetAllLights(Elevator_glob)
 
 	fmt.Println("\nNew state:")
-	ElevatorPrint(elevator)
+	ElevatorPrint(Elevator_glob)
 }
 
 func FsmOnFloorArrival(newFloor int) {
 	fmt.Printf("\n\n%s(%d)\n", "fsmOnFloorArrival", newFloor)
-	ElevatorPrint(elevator)
+	ElevatorPrint(Elevator_glob)
 
-	elevator.Floor = newFloor
+	Elevator_glob.Floor = newFloor
 
-	outputDevice.FloorIndicator(elevator.Floor)
+	outputDevice.FloorIndicator(Elevator_glob.Floor)
 
-	switch elevator.Behaviour {
+	switch Elevator_glob.Behaviour {
 	case EB_Moving:
 		fmt.Printf("ofa_move")
-		if RequestsShouldStop(elevator) {
+		if RequestsShouldStop(Elevator_glob) {
 			outputDevice.MotorDirection(D_Stop)
 			outputDevice.DoorLight(true)
-			elevator = RequestsClearAtCurrentFloor(elevator)
-			TimerStart(elevator.DoorOpenDuration_s)
-			SetAllLights(elevator)
-			elevator.Behaviour = EB_DoorOpen
+			Elevator_glob = RequestsClearAtCurrentFloor(Elevator_glob)
+			TimerStart(Elevator_glob.DoorOpenDuration_s)
+			SetAllLights(Elevator_glob)
+			Elevator_glob.Behaviour = EB_DoorOpen
 		}
 	default:
 		break
 	}
 
 	fmt.Println("\nNew state:")
-	ElevatorPrint(elevator)
+	ElevatorPrint(Elevator_glob)
 }
 
 func FsmOnDoorTimeout() {
 	fmt.Printf("\n\n%s()\n", "fsmOnDoorTimeout")
-	ElevatorPrint(elevator)
+	ElevatorPrint(Elevator_glob)
 
-	switch elevator.Behaviour {
+	switch Elevator_glob.Behaviour {
 	case EB_DoorOpen:
 		fmt.Printf("odt_door")
-		pair := RequestsChooseDirection(elevator)
-		elevator.Dirn = pair.Dirn
-		elevator.Behaviour = pair.Behaviour
+		pair := RequestsChooseDirection(Elevator_glob)
+		Elevator_glob.Dirn = pair.Dirn
+		Elevator_glob.Behaviour = pair.Behaviour
 
-		switch elevator.Behaviour {
+		switch Elevator_glob.Behaviour {
 		case EB_DoorOpen:
 			fmt.Printf("odt_door_door")
-			TimerStart(elevator.DoorOpenDuration_s)
-			elevator = RequestsClearAtCurrentFloor(elevator)
-			SetAllLights(elevator)
+			TimerStart(Elevator_glob.DoorOpenDuration_s)
+			Elevator_glob = RequestsClearAtCurrentFloor(Elevator_glob)
+			SetAllLights(Elevator_glob)
 		case EB_Moving:
 			fmt.Printf("odt_door_move")
 			outputDevice.DoorLight(false)
-			var mot_dir elevio.MotorDirection = elevio.MotorDirection(elevator.Dirn)
+			var mot_dir elevio.MotorDirection = elevio.MotorDirection(Elevator_glob.Dirn)
 			outputDevice.MotorDirection(mot_dir)
 		case EB_Idle:
 			fmt.Printf("odt_door_idle")
 			outputDevice.DoorLight(false)
-			var mot_dir elevio.MotorDirection = elevio.MotorDirection(elevator.Dirn)
+			var mot_dir elevio.MotorDirection = elevio.MotorDirection(Elevator_glob.Dirn)
 			outputDevice.MotorDirection(mot_dir)
 		}
 
@@ -153,6 +138,5 @@ func FsmOnDoorTimeout() {
 	}
 
 	fmt.Println("\nNew state:")
-	ElevatorPrint(elevator)
+	ElevatorPrint(Elevator_glob)
 }
-
