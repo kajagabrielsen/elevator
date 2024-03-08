@@ -25,12 +25,10 @@ func PeersUpdate(peerUpdateCh chan PeerUpdate, helloRx chan network.HelloMsg){
 					flag = 1
 				}
 			}
-			fmt.Println(flag)
 			if flag == 0 {
 				network.ListOfElevators = append(network.ListOfElevators, elev.Elevator)
 
 			}
-			fmt.Println("ID: hei hallo hahahhhsiogh",network.ListOfElevators[0].ID)
 			fmt.Printf("Received: %#v\n", elev)
 		}
 	}
