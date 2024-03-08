@@ -15,9 +15,5 @@ type HelloMsg struct {
 
 var AliveElevatorsID []string
 
-func GetAliveElevatorsID() []string {
-	return AliveElevatorsID
-}
-
 var ListOfElevators []utils.Elevator
 

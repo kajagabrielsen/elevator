@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	elevio.Init("localhost:15657", utils.N_FLOORS)
+	elevio.Init("localhost:15656", utils.N_FLOORS)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)
@@ -68,10 +68,10 @@ func main() {
 	// The example message. We just send one of these every second.
 	go func() {
 		e := utils.Elevator_glob
-		e.ID = id
 		helloMsg := network.HelloMsg{e, 0}
 		for {
 			helloMsg.Iter++
+            utils.Elevator_glob.ID = id
             helloMsg.Elevator = utils.Elevator_glob   
 			helloTx <- helloMsg
 			time.Sleep(1 * time.Second)
