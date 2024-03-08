@@ -12,6 +12,7 @@ var (
 
 func init() {
 	Elevator_glob = ElevatorInitialized()
+	fmt.Printf("init")
 
 	outputDevice = GetOutputDevice()
 }
@@ -140,3 +141,5 @@ func FsmOnDoorTimeout() {
 	fmt.Println("\nNew state:")
 	ElevatorPrint(Elevator_glob)
 }
+
+

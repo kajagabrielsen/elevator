@@ -18,7 +18,7 @@ type HRAElevState struct {
 	Behaviour   string `json:"behaviour"`
 	Floor       int    `json:"floor"`
 	Direction   string `json:"direction"`
-	CabRequests []bool `json:"cabRequests"`
+	CabRequests [utils.N_FLOORS]bool `json:"cabRequests"`
 }
 
 type HRAElevStatetemp struct {
@@ -26,17 +26,17 @@ type HRAElevStatetemp struct {
 	Behaviour   utils.ElevatorBehaviour `json:"behaviour"`
 	Floor       int                     `json:"floor"`
 	Direction   utils.Dirn              `json:"direction"`
-	CabRequests []bool                  `json:"cabRequests"`
+	CabRequests [utils.N_FLOORS]bool                  `json:"cabRequests"`
 }
 
 type HRAInput struct {
-	HallRequests [][2]bool               `json:"hallRequests"`
+	HallRequests [utils.N_FLOORS][2]bool               `json:"hallRequests"`
 	States       map[string]HRAElevState `json:"states"`
 }
 
-func GetHallCalls(elevators []utils.Elevator) [][2]bool {
+func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 	var n_elevators int = len(elevators)
-	GlobalHallCalls := [][2]bool{}
+	GlobalHallCalls := [utils.N_FLOORS][2]bool{}
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
 		HallCalls := [2]bool{}
 		up := false
@@ -56,9 +56,9 @@ func GetHallCalls(elevators []utils.Elevator) [][2]bool {
 	return GlobalHallCalls
 }
 
-func GetCabCalls(elevator utils.Elevator) []bool {
+func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
 	//	var n_elevators int = len(elevators)
-	CabCalls := []bool{}
+	CabCalls := [utils.N_FLOORS]bool{}
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
 		CabCalls[floor] = elevator.Requests[floor][2]
 	}
@@ -71,20 +71,20 @@ func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp {
 	for i := 0; i < n_elevators; i++ {
 		CabCalls := GetCabCalls(elevators[i])
 		elevastate := HRAElevStatetemp{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
-		myStates[i] = elevastate
+		myStates = append(myStates, elevastate)
 	}
 	return myStates
 
 }
 
-func CalculateCostFunc(elevators []utils.Elevator) map[string][][2]bool {
+func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2]bool {
 
 	hraExecutable := ""
 	switch runtime.GOOS {
 	case "linux":
 		hraExecutable = "hall_request_assigner"
 	case "windows":
-		hraExecutable = "hall_request_assigner.exe"
+		hraExecutable = "C:\\Users\\47467\\Downloads\\hall_request_assigner.exe"
 	default:
 		panic("OS not supported")
 	}
@@ -135,8 +135,8 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][][2]bool {
 	}
 
 	//convert the json received from hall_request_assigner to output
-	output := make(map[string][][2]bool)
-	err = json.Unmarshal(ret, output)
+	output := make(map[string][utils.N_FLOORS][2]bool)
+	err = json.Unmarshal(ret, &output)
 	if err != nil {
 		fmt.Println("json.Unmarshal error: ", err)
 		//return

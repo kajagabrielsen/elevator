@@ -1,13 +1,7 @@
 package network
 
 import (
-	"Elevator/networkcom/network/bcast"
-	//"Elevator/networkcom/network/localip"
-	"Elevator/networkcom/network/peers"
 	"Elevator/utils"
-	"fmt"
-	"os"
-	"time"
 )
 
 // We define some custom struct to send over the network.
@@ -27,15 +21,12 @@ func GetAliveElevatorsID() []string {
 
 var ListOfElevators []utils.Elevator
 
-
+/*
 func InitNetwork() {
 	// Our id can be anything. Here we pass it on the command line, using
 	//  `go run main.go -id=our_id`
 
 	var id string = os.Args[1]
-
-	
-
 
 	// var id string
 	// flag.StringVar(&id, "id", "", "id of this peer")
@@ -44,14 +35,14 @@ func InitNetwork() {
 	// ... or alternatively, we can use the localListOfElevators IP address.
 	// (But since we can run multiple programs on the same PC, we also append the
 	//  process ID)
-	/*if id == "" {
+	if id == "" {
 		localIP, err := localip.LocalIP()
 		if err != nil {
 			fmt.Println(err)
 			localIP = "DISCONNECTED"
 		}
 		id = fmt.Sprintf("peer-%s-%d", localIP, os.Getpid())
-	}*/
+	}
 	// We make a channel for receiving updates on the id's of the peers that are
 	//  alive on the network
 	peerUpdateCh := make(chan peers.PeerUpdate)
@@ -98,6 +89,7 @@ func InitNetwork() {
 			flag := 0
 			for _, element := range ListOfElevators{
 				if element.ID == elev.Elevator.ID{
+					element = elev.Elevator
 					flag = 1
 				}
 			}
@@ -111,4 +103,4 @@ func InitNetwork() {
 		}
 	}
 
-}
+}*/
