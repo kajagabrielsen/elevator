@@ -48,7 +48,7 @@ func ElevatorPrint(es Elevator) {
 
 func ElevatorInitialized() Elevator {
 	return Elevator{
-		Floor:     -1,
+		Floor:     1,
 		Dirn:      D_Stop,
 		Behaviour: EB_Idle,
 		ClearRequestVariant: CV_All,

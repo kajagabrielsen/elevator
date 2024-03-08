@@ -3,21 +3,20 @@ package main
 import (
 	"Elevator/driver-go-master/elevio"
 	"Elevator/hallassign"
-	network "Elevator/networkcom"
+	"Elevator/networkcom"
 	"Elevator/utils"
+    "Elevator/networkcom/network/bcast"
+	//"Elevator/networkcom/network/localip"
+	"Elevator/networkcom/network/peers"
+	"fmt"
+	"os"
+	"time"
 
 	//"Elevator/networkcom"
-	"fmt"
-	"time"
 )
 
 func main() {
-
-	numFloors := 4
-
-	elevio.Init("localhost:15657", numFloors)
-
-	var d elevio.MotorDirection = elevio.MD_Up
+	elevio.Init("localhost:15657", utils.N_FLOORS)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)
@@ -31,37 +30,61 @@ func main() {
 
 	utils.FsmOnInitBetweenFloors()
 
-	go network.InitNetwork() //Start network
+	//go network.InitNetwork() //Start network
+//////////////////////////////////////////////
 
+    var id string = os.Args[1]
 
-	for {
-		select {
-		case E := <-drv_buttons:
-			fmt.Printf("button")
-			hallassign.AssignHallRequest(utils.Elevator_glob)
-			utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
-		case F := <-drv_floors:
-			fmt.Printf("floor")
-			utils.FsmOnFloorArrival(F)
-		case a := <-drv_obstr:
-			fmt.Printf("obs")
-			fmt.Printf("%+v\n", a)
-			if a {
-				elevio.SetMotorDirection(elevio.MD_Stop)
-			} else {
-				elevio.SetMotorDirection(d)
-			}
+	// var id string
+	// flag.StringVar(&id, "id", "", "id of this peer")
+	// flag.Parse()
 
-		case a := <-drv_stop:
-			fmt.Printf("stop")
-			fmt.Printf("%+v\n", a)
-			for f := 0; f < numFloors; f++ {
-				for b := elevio.ButtonType(0); b < 3; b++ {
-					elevio.SetButtonLamp(b, f, false)
-				}
-			}
-		case <-time.After(time.Millisecond * time.Duration(utils.DoorOpenDuration*1000)):
-			utils.FsmOnDoorTimeout()
+	// ... or alternatively, we can use the localListOfElevators IP address.
+	// (But since we can run multiple programs on the same PC, we also append the
+	//  process ID)
+	/*if id == "" {
+		localIP, err := localip.LocalIP()
+		if err != nil {
+			fmt.Println(err)
+			localIP = "DISCONNECTED"
 		}
-	}
+		id = fmt.Sprintf("peer-%s-%d", localIP, os.Getpid())
+	}*/
+	// We make a channel for receiving updates on the id's of the peers that are
+	//  alive on the network
+	peerUpdateCh := make(chan peers.PeerUpdate)
+	// We can disable/enable the transmitter after it has been started.
+	// This could be used to signal that we are somehow "unavailable".
+	peerTxEnable := make(chan bool)
+	go peers.Transmitter(15611, id, peerTxEnable)
+	go peers.Receiver(15611, peerUpdateCh)
+
+	// We make channels for sending and receiving our custom data types
+	helloTx := make(chan network.HelloMsg)
+	helloRx := make(chan network.HelloMsg)
+	// ... and start the transmitter/receiver pair on some port
+	// These functions can take any number of channels! It is also possible to
+	//  start multiple transmitters/receivers on the same port.
+	go bcast.Transmitter(16578, helloTx)
+	go bcast.Receiver(16578, helloRx)
+
+	// The example message. We just send one of these every second.
+	go func() {
+		e := utils.Elevator_glob
+		e.ID = id
+		helloMsg := network.HelloMsg{e, 0}
+		for {
+			helloMsg.Iter++
+			helloTx <- helloMsg
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	fmt.Println("Started")
+	//ListOfElevators := [3]utils.Elevator{}
+    go hallassign.FSM(drv_buttons, drv_floors, drv_obstr, drv_stop)
+
+    go peers.PeersUpdate(peerUpdateCh, helloRx)
+
+    select{}
 }
