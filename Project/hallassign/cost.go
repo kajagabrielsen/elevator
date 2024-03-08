@@ -1,7 +1,6 @@
 package hallassign
 
 import (
-	//"Elevator/driver-go-master/elevio"
 	"Elevator/utils"
 	"encoding/json"
 	"fmt"
@@ -26,11 +25,11 @@ type HRAElevStatetemp struct {
 	Behaviour   utils.ElevatorBehaviour `json:"behaviour"`
 	Floor       int                     `json:"floor"`
 	Direction   utils.Dirn              `json:"direction"`
-	CabRequests [utils.N_FLOORS]bool                  `json:"cabRequests"`
+	CabRequests [utils.N_FLOORS]bool    `json:"cabRequests"`
 }
 
 type HRAInput struct {
-	HallRequests [utils.N_FLOORS][2]bool               `json:"hallRequests"`
+	HallRequests [utils.N_FLOORS][2]bool `json:"hallRequests"`
 	States       map[string]HRAElevState `json:"states"`
 }
 
@@ -57,7 +56,6 @@ func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 }
 
 func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
-	//	var n_elevators int = len(elevators)
 	CabCalls := [utils.N_FLOORS]bool{}
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
 		CabCalls[floor] = elevator.Requests[floor][2]

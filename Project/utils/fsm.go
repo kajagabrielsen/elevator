@@ -38,7 +38,6 @@ func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 
 	switch Elevator_glob.Behaviour {
 	case EB_DoorOpen:
-		fmt.Printf("fsm_door")
 		if RequestsShouldClearImmediately(Elevator_glob, btnFloor, btnType) {
 			TimerStart(Elevator_glob.DoorOpenDuration_s)
 		} else {
@@ -47,28 +46,23 @@ func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 
 	case EB_Moving:
 		Elevator_glob.Requests[btnFloor][btnType] = true
-		fmt.Printf("fsm_move")
 
 	case EB_Idle:
-		fmt.Printf("fsm_idle")
 		Elevator_glob.Requests[btnFloor][btnType] = true
 		pair := RequestsChooseDirection(Elevator_glob)
 		Elevator_glob.Dirn = pair.Dirn
 		Elevator_glob.Behaviour = pair.Behaviour
 		switch pair.Behaviour {
 		case EB_DoorOpen:
-			fmt.Printf("fsm_idle_door")
 			outputDevice.DoorLight(true)
 			TimerStart(Elevator_glob.DoorOpenDuration_s)
 			Elevator_glob = RequestsClearAtCurrentFloor(Elevator_glob)
 
 		case EB_Moving:
-			fmt.Printf("fsm_idle_move")
 			var mot_dir elevio.MotorDirection = elevio.MotorDirection(Elevator_glob.Dirn)
 			outputDevice.MotorDirection(mot_dir)
 
 		case EB_Idle:
-			fmt.Printf("fsm_idle_idle")
 		}
 	}
 
@@ -88,7 +82,6 @@ func FsmOnFloorArrival(newFloor int) {
 
 	switch Elevator_glob.Behaviour {
 	case EB_Moving:
-		fmt.Printf("ofa_move")
 		if RequestsShouldStop(Elevator_glob) {
 			outputDevice.MotorDirection(D_Stop)
 			outputDevice.DoorLight(true)
@@ -111,24 +104,20 @@ func FsmOnDoorTimeout() {
 
 	switch Elevator_glob.Behaviour {
 	case EB_DoorOpen:
-		fmt.Printf("odt_door")
 		pair := RequestsChooseDirection(Elevator_glob)
 		Elevator_glob.Dirn = pair.Dirn
 		Elevator_glob.Behaviour = pair.Behaviour
 
 		switch Elevator_glob.Behaviour {
 		case EB_DoorOpen:
-			fmt.Printf("odt_door_door")
 			TimerStart(Elevator_glob.DoorOpenDuration_s)
 			Elevator_glob = RequestsClearAtCurrentFloor(Elevator_glob)
 			SetAllLights(Elevator_glob)
 		case EB_Moving:
-			fmt.Printf("odt_door_move")
 			outputDevice.DoorLight(false)
 			var mot_dir elevio.MotorDirection = elevio.MotorDirection(Elevator_glob.Dirn)
 			outputDevice.MotorDirection(mot_dir)
 		case EB_Idle:
-			fmt.Printf("odt_door_idle")
 			outputDevice.DoorLight(false)
 			var mot_dir elevio.MotorDirection = elevio.MotorDirection(Elevator_glob.Dirn)
 			outputDevice.MotorDirection(mot_dir)

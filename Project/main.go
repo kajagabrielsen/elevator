@@ -6,13 +6,10 @@ import (
 	"Elevator/networkcom"
 	"Elevator/utils"
     "Elevator/networkcom/network/bcast"
-	//"Elevator/networkcom/network/localip"
 	"Elevator/networkcom/network/peers"
 	"fmt"
 	"os"
 	"time"
-
-	//"Elevator/networkcom"
 )
 
 func main() {
@@ -75,13 +72,14 @@ func main() {
 		helloMsg := network.HelloMsg{e, 0}
 		for {
 			helloMsg.Iter++
+            helloMsg.Elevator = utils.Elevator_glob   
 			helloTx <- helloMsg
 			time.Sleep(1 * time.Second)
 		}
 	}()
 
 	fmt.Println("Started")
-	//ListOfElevators := [3]utils.Elevator{}
+
     go hallassign.FSM(drv_buttons, drv_floors, drv_obstr, drv_stop)
 
     go peers.PeersUpdate(peerUpdateCh, helloRx)
