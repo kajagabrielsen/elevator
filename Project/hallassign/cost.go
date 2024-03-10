@@ -82,7 +82,9 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	case "linux":
 		hraExecutable = "hall_request_assigner"
 	case "windows":
-		hraExecutable = "C:\\Users\\47467\\Downloads\\hall_request_assigner.exe"
+		hraExecutable = "hall_request_assigner.exe"
+	case "darwin":
+		hraExecutable = "hall_request_assigner_mac"
 	default:
 		panic("OS not supported")
 	}
@@ -125,7 +127,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	}
 
 	//runds the hall_request_assigner file
-	ret, err := exec.Command(hraExecutable, "-i", string(jsonBytes)).CombinedOutput()
+	ret, err := exec.Command("../" + hraExecutable, "-i", string(jsonBytes)).CombinedOutput()
 	if err != nil {
 		fmt.Println("exec.Command error: ", err)
 		fmt.Println(string(ret))
