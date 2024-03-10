@@ -1,12 +1,13 @@
 package peers
 
 import (
+	"Elevator/driver-go-master/elevio"
 	"Elevator/networkcom"
+	"Elevator/utils"
 	"fmt"
-
 )
 
-func PeersUpdate(peerUpdateCh chan PeerUpdate, helloRx chan network.HelloMsg){
+func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpdate, helloRx chan network.HelloMsg){
 	fmt.Printf("peers")
 	for {
 		select {
@@ -19,9 +20,10 @@ func PeersUpdate(peerUpdateCh chan PeerUpdate, helloRx chan network.HelloMsg){
 
 		case elev := <-helloRx:
 			flag := 0
-			for _, element := range network.ListOfElevators{
+			for i, element := range network.ListOfElevators{
 				if element.ID == elev.Elevator.ID{
-					element = elev.Elevator
+					network.ListOfElevators[i] = elev.Elevator
+					//element = elev.Elevator
 					flag = 1
 				}
 			}
@@ -29,7 +31,12 @@ func PeersUpdate(peerUpdateCh chan PeerUpdate, helloRx chan network.HelloMsg){
 				network.ListOfElevators = append(network.ListOfElevators, elev.Elevator)
 
 			}
+
+			fmt.Println(network.ListOfElevators)
 			fmt.Printf("Received: %#v\n", elev)
+
+		case btn := <-drv_buttons:
+				utils.Elevator_glob.Requests[btn.Floor][btn.Button] = true
 		}
 	}
 

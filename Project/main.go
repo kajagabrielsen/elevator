@@ -82,7 +82,7 @@ func main() {
 
     go hallassign.FSM(drv_buttons, drv_floors, drv_obstr, drv_stop)
 
-    go peers.PeersUpdate(peerUpdateCh, helloRx)
+    go peers.PeersUpdate(drv_buttons, peerUpdateCh, helloRx)
 
     select{}
 }
