@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"Elevator/driver-go-master/elevio"
 	"time"
-
 )
 
 func FSM(drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr chan bool, drv_stop chan bool){
