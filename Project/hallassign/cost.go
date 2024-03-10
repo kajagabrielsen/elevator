@@ -6,14 +6,13 @@ import (
 	"fmt"
 	"os/exec"
 	"runtime"
-	"strconv"
 )
 
 // Struct members must be public in order to be accessible by json.Marshal/.Unmarshal
 // This means they must start with a capital letter, so we need to use field renaming struct tags to make them camelCase
 
 type HRAElevState struct {
-	ElevID      int    `json:"id"`
+	ElevID      string    `json:"id"`
 	Behaviour   string `json:"behaviour"`
 	Floor       int    `json:"floor"`
 	Direction   string `json:"direction"`
@@ -21,7 +20,7 @@ type HRAElevState struct {
 }
 
 type HRAElevStatetemp struct {
-	ElevID      int                     `json:"id"`
+	ElevID      string                     `json:"id"`
 	Behaviour   utils.ElevatorBehaviour `json:"behaviour"`
 	Floor       int                     `json:"floor"`
 	Direction   utils.Dirn              `json:"direction"`
@@ -69,7 +68,7 @@ func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp {
 	myStates := []HRAElevStatetemp{}
 	for i := 0; i < n_elevators; i++ {
 		CabCalls := GetCabCalls(elevators[i])
-		elevastate := HRAElevStatetemp{i, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
+		elevastate := HRAElevStatetemp{elevators[i].ID, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
 		myStates = append(myStates, elevastate)
 	}
 	return myStates
@@ -96,7 +95,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	}
 
 	for _, elevatorStatus := range GetMyStates(elevators) {
-		input.States[strconv.Itoa(elevatorStatus.ElevID)] = HRAElevState{
+		input.States[elevatorStatus.ElevID] = HRAElevState{
 			Behaviour: func() string {
 				if elevatorStatus.Behaviour == 0 {
 					return "idle"
