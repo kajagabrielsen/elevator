@@ -49,7 +49,7 @@ func GetIndex(key string, list []string) int {
 }
 
 func AssignHallRequest(btnFloor int, btnType utils.Button) {
-	utils.Elevator_glob.Requests[btnFloor][btnType] = true
+	//utils.Elevator_glob.Requests[btnFloor][btnType] = true
 	ListOfElevators := network.ListOfElevators
 	AssignedHallCalls := CalculateCostFunc(ListOfElevators)
 	OneElevCabCalls := GetCabCalls(utils.Elevator_glob)
