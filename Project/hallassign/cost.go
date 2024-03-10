@@ -32,16 +32,17 @@ type HRAInput struct {
 	HallRequests [utils.N_FLOORS][2]bool `json:"hallRequests"`
 	States       map[string]HRAElevState `json:"states"`
 }
+
+var GlobalHallCalls = [utils.N_FLOORS][2]bool{}
+
 func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 	var n_elevators int = len(elevators)
-	GlobalHallCalls := [utils.N_FLOORS][2]bool{}
-	fmt.Printf("_______________________________________\n")
-	fmt.Println(utils.Elevator_glob.Requests)
+	fmt.Printf("________________eleavtors_______________________\n")
+	fmt.Println(elevators)
 
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
-		up := GlobalHallCalls[floor][0]
-		down := GlobalHallCalls[floor][1]
-
+		up := elevators[0].Requests[floor][0]
+		down := elevators[0].Requests[floor][1]
 		for i := 0; i < n_elevators; i++ {
 			up = up || elevators[i].Requests[floor][0]
 			down = down || elevators[i].Requests[floor][1]
@@ -49,7 +50,8 @@ func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 
 		GlobalHallCalls[floor] = [2]bool{up, down}
 	}
-
+	fmt.Printf("________________GlobalHallCalls_______________________\n")
+	fmt.Println(GlobalHallCalls)
 	return GlobalHallCalls
 }
 
@@ -99,7 +101,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 				if elevatorStatus.Behaviour == 0 {
 					return "idle"
 				} else if elevatorStatus.Behaviour == 1 {
-					return "door open"
+					return "doorOpen"
 				} else {
 					return "moving"
 				}
