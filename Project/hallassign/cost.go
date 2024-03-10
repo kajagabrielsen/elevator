@@ -32,28 +32,27 @@ type HRAInput struct {
 	HallRequests [utils.N_FLOORS][2]bool `json:"hallRequests"`
 	States       map[string]HRAElevState `json:"states"`
 }
-
 func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 	var n_elevators int = len(elevators)
 	GlobalHallCalls := [utils.N_FLOORS][2]bool{}
+	fmt.Printf("_______________________________________\n")
+	fmt.Println(utils.Elevator_glob.Requests)
+
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
-		HallCalls := [2]bool{}
-		up := false
-		down := false
+		up := GlobalHallCalls[floor][0]
+		down := GlobalHallCalls[floor][1]
+
 		for i := 0; i < n_elevators; i++ {
-			if elevators[i].Requests[floor][0] {
-				up = true
-			}
-			if elevators[i].Requests[floor][1] {
-				down = true
-			}
+			up = up || elevators[i].Requests[floor][0]
+			down = down || elevators[i].Requests[floor][1]
 		}
-		HallCalls[0] = up
-		HallCalls[1] = down
-		GlobalHallCalls[floor] = HallCalls
+
+		GlobalHallCalls[floor] = [2]bool{up, down}
 	}
+
 	return GlobalHallCalls
 }
+
 
 func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
 	CabCalls := [utils.N_FLOORS]bool{}
@@ -127,7 +126,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	}
 
 	//runds the hall_request_assigner file
-	ret, err := exec.Command("../" + hraExecutable, "-i", string(jsonBytes)).CombinedOutput()
+	ret, err := exec.Command("./hallassign/" + hraExecutable, "-i", string(jsonBytes)).CombinedOutput()
 	if err != nil {
 		fmt.Println("exec.Command error: ", err)
 		fmt.Println(string(ret))
