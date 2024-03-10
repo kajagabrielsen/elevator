@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	elevio.Init("localhost:15657", utils.N_FLOORS)
+	elevio.Init("localhost:15658", utils.N_FLOORS)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)
@@ -74,7 +74,7 @@ func main() {
             utils.Elevator_glob.ID = id
             helloMsg.Elevator = utils.Elevator_glob   
 			helloTx <- helloMsg
-			time.Sleep(1 * time.Second)
+			time.Sleep(900 * time.Millisecond)
 		}
 	}()
 

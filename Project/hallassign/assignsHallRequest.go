@@ -13,7 +13,7 @@ func FSM(drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr cha
 	for {
 		select {
 		case E := <-drv_buttons:
-			AssignHallRequest(E.Floor, utils.Button(E.Button))
+			AssignHallRequest()
 			utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
 		case F := <-drv_floors:
 			utils.FsmOnFloorArrival(F)
@@ -48,8 +48,7 @@ func GetIndex(key string, list []string) int {
 	return 0
 }
 
-func AssignHallRequest(btnFloor int, btnType utils.Button) {
-	//utils.Elevator_glob.Requests[btnFloor][btnType] = true
+func AssignHallRequest() {
 	ListOfElevators := network.ListOfElevators
 	AssignedHallCalls := CalculateCostFunc(ListOfElevators)
 	OneElevCabCalls := GetCabCalls(utils.Elevator_glob)
