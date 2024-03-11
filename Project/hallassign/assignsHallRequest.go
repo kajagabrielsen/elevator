@@ -8,37 +8,23 @@ import (
 	"time"
 )
 
-func FSM(buttonPressCh chan elevio.ButtonEvent, drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr chan bool, drv_stop chan bool){
+func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr chan bool, drv_stop chan bool){
 	var d elevio.MotorDirection = elevio.MD_Up
 	for {
 		select {
 		case E := <-drv_buttons:
 			utils.Elevator_glob.Requests[E.Floor][E.Button]=true
-			AssignHallRequest()
-			for floor_num, floor := range OneElevRequests{
-				for btn_num, _ := range floor {
-					if OneElevRequests[floor_num][btn_num]{
-						utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
-						AssignHallRequest()
-					}
-				}
-			}
 		case F := <-drv_floors:
-			AssignHallRequest()
 			utils.FsmOnFloorArrival(F)
-			
 		case a := <-drv_obstr:
-			AssignHallRequest()
 			fmt.Printf("%+v\n", a)
 			if a {
 				elevio.SetMotorDirection(elevio.MD_Stop)
 			} else {
 				elevio.SetMotorDirection(d)
 			}
-			
 
 		case a := <-drv_stop:
-			AssignHallRequest()
 			fmt.Printf("%+v\n", a)
 			for f := 0; f < utils.N_FLOORS; f++ {
 				for b := elevio.ButtonType(0); b < 3; b++ {
@@ -47,6 +33,14 @@ func FSM(buttonPressCh chan elevio.ButtonEvent, drv_buttons chan elevio.ButtonEv
 			}
 		case <-time.After(time.Millisecond * time.Duration(utils.DoorOpenDuration*1000)):
 			utils.FsmOnDoorTimeout()
+		}
+		AssignHallRequest()
+		for floor_num, floor := range OneElevRequests{
+			for btn_num, _ := range floor {
+				if OneElevRequests[floor_num][btn_num]{
+					utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
+				}
+			}
 		}
 	}
 }
