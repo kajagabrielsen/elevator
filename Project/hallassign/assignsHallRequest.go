@@ -12,9 +12,9 @@ func FSM(buttonPressCh chan elevio.ButtonEvent, drv_buttons chan elevio.ButtonEv
 	var d elevio.MotorDirection = elevio.MD_Up
 	for {
 		select {
-		case E := <-drv_buttons:
-			AssignHallRequest(drv_buttons,buttonPressCh)
-			utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
+		case _= <-drv_buttons:
+			AssignHallRequest()
+			//utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
 		case F := <-drv_floors:
 			utils.FsmOnFloorArrival(F)
 		case a := <-drv_obstr:
@@ -48,7 +48,7 @@ func GetIndex(key string, list []string) int {
 	return 0
 }
 
-func AssignHallRequest(drv_buttons chan elevio.ButtonEvent, buttonPressCh chan elevio.ButtonEvent) {
+func AssignHallRequest() {
     ListOfElevators := network.ListOfElevators
     AssignedHallCalls := CalculateCostFunc(ListOfElevators)
     OneElevCabCalls := GetCabCalls(utils.Elevator_glob)
@@ -62,6 +62,14 @@ func AssignHallRequest(drv_buttons chan elevio.ButtonEvent, buttonPressCh chan e
         OneElevRequests[floor][2] = OneElevCabCalls[floor]
     }
     utils.Elevator_glob.Requests = OneElevRequests
+
+	for floor_num, floor := range utils.Elevator_glob.Requests{
+		for btn_num, _ := range floor {
+			if utils.Elevator_glob.Requests[floor_num][btn_num]{
+				utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
+			}
+		}
+	}
 
 }
 
@@ -82,7 +90,7 @@ func HandleButtonPressUpdate( buttonPressCh chan elevio.ButtonEvent){
                 network.ListOfElevators = append(network.ListOfElevators, utils.Elevator_glob)
             }
 
-			CalculateCostFunc(network.ListOfElevators)
+			AssignHallRequest()
 
         }
     }

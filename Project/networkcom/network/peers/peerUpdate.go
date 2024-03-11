@@ -3,6 +3,7 @@ package peers
 import (
 	//"Elevator/driver-go-master/elevio"
 	"Elevator/driver-go-master/elevio"
+	"Elevator/hallassign"
 	"Elevator/networkcom"
 	"Elevator/utils"
 	"fmt"
@@ -34,7 +35,7 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			}
 			fmt.Println(network.ListOfElevators)
 			fmt.Printf("Received: %#v\n", elev)
-
+			hallassign.AssignHallRequest()
 		case btn := <-drv_buttons:
 			utils.Elevator_glob.Requests[btn.Floor][btn.Button] = true
 		}
