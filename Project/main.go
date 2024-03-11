@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	elevio.Init("localhost:15658", utils.N_FLOORS)
+	elevio.Init("localhost:15657", utils.N_FLOORS)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)
@@ -62,6 +62,7 @@ func main() {
 	// We make channels for sending and receiving our custom data types
 	helloTx := make(chan network.HelloMsg)
 	helloRx := make(chan network.HelloMsg)
+
 	// ... and start the transmitter/receiver pair on some port
 	// These functions can take any number of channels! It is also possible to
 	//  start multiple transmitters/receivers on the same port.
@@ -80,11 +81,10 @@ func main() {
 			time.Sleep(1 * time.Second)
 		}
 	}()
-    ButtonPressCh := make(chan elevio.ButtonEvent)
     go hallassign.HandleButtonPressUpdate(drv_buttons2 )
 	fmt.Println("Started")
 
-    go hallassign.FSM(ButtonPressCh, drv_buttons,  drv_floors, drv_obstr, drv_stop)
+    go hallassign.FSM(helloRx, drv_buttons,  drv_floors, drv_obstr, drv_stop)
 
     go peers.PeersUpdate(drv_buttons, peerUpdateCh, helloRx)
 
