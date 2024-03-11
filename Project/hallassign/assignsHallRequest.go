@@ -15,9 +15,9 @@ func FSM(buttonPressCh chan elevio.ButtonEvent, drv_buttons chan elevio.ButtonEv
 		case E := <-drv_buttons:
 			utils.Elevator_glob.Requests[E.Floor][E.Button]=true
 			AssignHallRequest()
-			for floor_num, floor := range utils.Elevator_glob.Requests{
+			for floor_num, floor := range OneElevRequests{
 				for btn_num, _ := range floor {
-					if utils.Elevator_glob.Requests[floor_num][btn_num]{
+					if OneElevRequests[floor_num][btn_num]{
 						utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
 						AssignHallRequest()
 					}
@@ -61,20 +61,21 @@ func GetIndex(key string, list []string) int {
 	return 0
 }
 
+var OneElevRequests = [utils.N_FLOORS][utils.N_BUTTONS]bool{}
+
 func AssignHallRequest() {
 	ListOfElevators := network.ListOfElevators
     AssignedHallCalls := CalculateCostFunc(ListOfElevators)
     OneElevCabCalls := GetCabCalls(utils.Elevator_glob)
     OneElevHallCalls := AssignedHallCalls[utils.Elevator_glob.ID]
 
-    OneElevRequests := [utils.N_FLOORS][utils.N_BUTTONS]bool{}
-
     for floor := 0; floor < utils.N_FLOORS; floor++ {
         OneElevRequests[floor][0] = OneElevHallCalls[floor][0]
         OneElevRequests[floor][1] = OneElevHallCalls[floor][1]
         OneElevRequests[floor][2] = OneElevCabCalls[floor]
     }
-    utils.Elevator_glob.Requests = OneElevRequests
+	fmt.Println(OneElevRequests)
+   //utils.Elevator_glob.Requests = OneElevRequests
 
 
 
