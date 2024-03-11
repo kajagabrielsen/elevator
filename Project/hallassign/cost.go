@@ -34,45 +34,6 @@ type HRAInput struct {
 
 var GlobalHallCalls = [utils.N_FLOORS][2]bool{}
 
-func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
-	var n_elevators int = len(elevators)
-	fmt.Println(elevators)
-
-	for floor := 0; floor < utils.N_FLOORS; floor++ {
-		up := elevators[0].Requests[floor][0]
-		down := elevators[0].Requests[floor][1]
-		for i := 0; i < n_elevators; i++ {
-			up = up || elevators[i].Requests[floor][0]
-			down = down || elevators[i].Requests[floor][1]
-		}
-
-		GlobalHallCalls[floor] = [2]bool{up, down}
-	}
-	fmt.Println(GlobalHallCalls)
-	return GlobalHallCalls
-}
-
-
-func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
-	CabCalls := [utils.N_FLOORS]bool{}
-	for floor := 0; floor < utils.N_FLOORS; floor++ {
-		CabCalls[floor] = elevator.Requests[floor][2]
-	}
-	return CabCalls
-}
-
-func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp {
-	var n_elevators int = len(elevators)
-	myStates := []HRAElevStatetemp{}
-	for i := 0; i < n_elevators; i++ {
-		CabCalls := GetCabCalls(elevators[i])
-		elevastate := HRAElevStatetemp{elevators[i].ID, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
-		myStates = append(myStates, elevastate)
-	}
-	return myStates
-
-}
-
 func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2]bool {
 
 	hraExecutable := ""
@@ -146,4 +107,43 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	}
 
 	return output
+}
+
+func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
+	var n_elevators int = len(elevators)
+	fmt.Println(elevators)
+
+	for floor := 0; floor < utils.N_FLOORS; floor++ {
+		up := elevators[0].Requests[floor][0]
+		down := elevators[0].Requests[floor][1]
+		for i := 0; i < n_elevators; i++ {
+			up = up || elevators[i].Requests[floor][0]
+			down = down || elevators[i].Requests[floor][1]
+		}
+
+		GlobalHallCalls[floor] = [2]bool{up, down}
+	}
+	fmt.Println(GlobalHallCalls)
+	return GlobalHallCalls
+}
+
+
+func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
+	CabCalls := [utils.N_FLOORS]bool{}
+	for floor := 0; floor < utils.N_FLOORS; floor++ {
+		CabCalls[floor] = elevator.Requests[floor][2]
+	}
+	return CabCalls
+}
+
+func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp {
+	var n_elevators int = len(elevators)
+	myStates := []HRAElevStatetemp{}
+	for i := 0; i < n_elevators; i++ {
+		CabCalls := GetCabCalls(elevators[i])
+		elevastate := HRAElevStatetemp{elevators[i].ID, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
+		myStates = append(myStates, elevastate)
+	}
+	return myStates
+
 }
