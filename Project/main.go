@@ -4,16 +4,17 @@ import (
 	"Elevator/driver-go-master/elevio"
 	"Elevator/hallassign"
 	"Elevator/networkcom"
-	"Elevator/utils"
-    "Elevator/networkcom/network/bcast"
+	"Elevator/networkcom/network/bcast"
 	"Elevator/networkcom/network/peers"
+	"Elevator/utils"
 	"fmt"
 	"os"
 	"time"
 )
 
 func main() {
-	elevio.Init("localhost:15658", utils.N_FLOORS)
+
+	elevio.Init("localhost:15657", utils.N_FLOORS)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)
@@ -26,6 +27,8 @@ func main() {
 	go elevio.PollStopButton(drv_stop)
 
 	utils.FsmOnInitBetweenFloors()
+    drv_buttons2 := make(chan elevio.ButtonEvent)
+    go elevio.PollButtons(drv_buttons2)
 
 	//go network.InitNetwork() //Start network
 //////////////////////////////////////////////
@@ -74,13 +77,14 @@ func main() {
             utils.Elevator_glob.ID = id
             helloMsg.Elevator = utils.Elevator_glob   
 			helloTx <- helloMsg
-			time.Sleep(900 * time.Millisecond)
+			time.Sleep(1 * time.Second)
 		}
 	}()
-
+    ButtonPressCh := make(chan elevio.ButtonEvent)
+    go hallassign.HandleButtonPressUpdate(drv_buttons2 )
 	fmt.Println("Started")
 
-    go hallassign.FSM(drv_buttons, drv_floors, drv_obstr, drv_stop)
+    go hallassign.FSM(ButtonPressCh, drv_buttons,  drv_floors, drv_obstr, drv_stop)
 
     go peers.PeersUpdate(drv_buttons, peerUpdateCh, helloRx)
 
