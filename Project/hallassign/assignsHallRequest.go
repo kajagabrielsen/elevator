@@ -1,10 +1,10 @@
 package hallassign
 
 import (
+	"Elevator/driver-go-master/elevio"
 	"Elevator/networkcom"
 	"Elevator/utils"
 	"fmt"
-	"Elevator/driver-go-master/elevio"
 	"time"
 )
 
@@ -12,9 +12,16 @@ func FSM(buttonPressCh chan elevio.ButtonEvent, drv_buttons chan elevio.ButtonEv
 	var d elevio.MotorDirection = elevio.MD_Up
 	for {
 		select {
-		case _= <-drv_buttons:
+		case E := <-drv_buttons:
+			utils.Elevator_glob.Requests[E.Floor][E.Button]=true
 			AssignHallRequest()
-			//utils.FsmOnRequestButtonPress(E.Floor, utils.Button(E.Button))
+			for floor_num, floor := range utils.Elevator_glob.Requests{
+				for btn_num, _ := range floor {
+					if utils.Elevator_glob.Requests[floor_num][btn_num]{
+						utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
+					}
+				}
+			}
 		case F := <-drv_floors:
 			utils.FsmOnFloorArrival(F)
 		case a := <-drv_obstr:
@@ -63,13 +70,7 @@ func AssignHallRequest() {
     }
     utils.Elevator_glob.Requests = OneElevRequests
 
-	for floor_num, floor := range utils.Elevator_glob.Requests{
-		for btn_num, _ := range floor {
-			if utils.Elevator_glob.Requests[floor_num][btn_num]{
-				utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
-			}
-		}
-	}
+
 
 }
 
@@ -90,7 +91,7 @@ func HandleButtonPressUpdate( buttonPressCh chan elevio.ButtonEvent){
                 network.ListOfElevators = append(network.ListOfElevators, utils.Elevator_glob)
             }
 
-			AssignHallRequest()
+			//AssignHallRequest()
 
         }
     }
