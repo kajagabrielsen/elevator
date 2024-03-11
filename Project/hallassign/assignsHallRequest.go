@@ -19,20 +19,26 @@ func FSM(buttonPressCh chan elevio.ButtonEvent, drv_buttons chan elevio.ButtonEv
 				for btn_num, _ := range floor {
 					if utils.Elevator_glob.Requests[floor_num][btn_num]{
 						utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
+						AssignHallRequest()
 					}
 				}
 			}
 		case F := <-drv_floors:
+			AssignHallRequest()
 			utils.FsmOnFloorArrival(F)
+			
 		case a := <-drv_obstr:
+			AssignHallRequest()
 			fmt.Printf("%+v\n", a)
 			if a {
 				elevio.SetMotorDirection(elevio.MD_Stop)
 			} else {
 				elevio.SetMotorDirection(d)
 			}
+			
 
 		case a := <-drv_stop:
+			AssignHallRequest()
 			fmt.Printf("%+v\n", a)
 			for f := 0; f < utils.N_FLOORS; f++ {
 				for b := elevio.ButtonType(0); b < 3; b++ {
@@ -56,7 +62,7 @@ func GetIndex(key string, list []string) int {
 }
 
 func AssignHallRequest() {
-    ListOfElevators := network.ListOfElevators
+	ListOfElevators := network.ListOfElevators
     AssignedHallCalls := CalculateCostFunc(ListOfElevators)
     OneElevCabCalls := GetCabCalls(utils.Elevator_glob)
     OneElevHallCalls := AssignedHallCalls[utils.Elevator_glob.ID]
