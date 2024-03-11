@@ -36,7 +36,6 @@ var GlobalHallCalls = [utils.N_FLOORS][2]bool{}
 
 func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 	var n_elevators int = len(elevators)
-	fmt.Printf("________________eleavtors_______________________\n")
 	fmt.Println(elevators)
 
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
@@ -49,7 +48,6 @@ func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 
 		GlobalHallCalls[floor] = [2]bool{up, down}
 	}
-	fmt.Printf("________________GlobalHallCalls_______________________\n")
 	fmt.Println(GlobalHallCalls)
 	return GlobalHallCalls
 }

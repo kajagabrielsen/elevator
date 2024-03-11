@@ -1,6 +1,7 @@
 package peers
 
 import (
+	//"Elevator/driver-go-master/elevio"
 	"Elevator/driver-go-master/elevio"
 	"Elevator/networkcom"
 	"Elevator/utils"
@@ -31,12 +32,11 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 				network.ListOfElevators = append(network.ListOfElevators, elev.Elevator)
 
 			}
-
 			fmt.Println(network.ListOfElevators)
 			fmt.Printf("Received: %#v\n", elev)
 
 		case btn := <-drv_buttons:
-				utils.Elevator_glob.Requests[btn.Floor][btn.Button] = true
+			utils.Elevator_glob.Requests[btn.Floor][btn.Button] = true
 		}
 	}
 
