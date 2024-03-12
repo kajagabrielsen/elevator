@@ -2,21 +2,21 @@ package hallassign
 
 import (
 	"Elevator/driver-go-master/elevio"
-	"Elevator/networkcom"
+	network "Elevator/networkcom"
 	"Elevator/utils"
 	"fmt"
 	"time"
 )
 
-func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr chan bool, drv_stop chan bool){
+func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr chan bool, drv_stop chan bool) {
 	var d elevio.MotorDirection = elevio.MD_Up
 	for {
 		select {
 		case E := <-drv_buttons:
-			utils.Elevator_glob.Requests[E.Floor][E.Button]=true
+			utils.ElevatorGlob.Requests[E.Floor][E.Button] = true
 		case F := <-drv_floors:
 			utils.FsmOnFloorArrival(F)
-			OneElevRequests[F] = [utils.N_BUTTONS]bool{false,false,false}
+			OneElevRequests[F] = [utils.N_BUTTONS]bool{false, false, false}
 		case a := <-drv_obstr:
 			fmt.Printf("%+v\n", a)
 			if a {
@@ -36,9 +36,9 @@ func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv
 			utils.FsmOnDoorTimeout()
 		}
 		AssignHallRequest()
-		for floor_num, floor := range OneElevRequests{
-			for btn_num, _ := range floor {
-				if OneElevRequests[floor_num][btn_num]{
+		for floor_num, floor := range OneElevRequests {
+			for btn_num := range floor {
+				if OneElevRequests[floor_num][btn_num] {
 					utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
 				}
 			}
