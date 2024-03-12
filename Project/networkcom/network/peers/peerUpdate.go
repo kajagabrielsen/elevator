@@ -7,6 +7,8 @@ import (
 	"fmt"
 )
 
+var DeadElevatorsID []string
+
 func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpdate, helloRx chan network.HelloMsg) {
 	fmt.Printf("peers")
 	for {
@@ -17,6 +19,25 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			fmt.Printf("  New:      %q\n", p.New)
 			fmt.Printf("  Lost:     %q\n", p.Lost)
 			network.AliveElevatorsID = p.Peers
+			DeadElevatorsID = p.Lost
+
+			//fjerner lost peers fra ListOfElevators
+			var result []utils.Elevator
+
+			for _, elevator := range network.ListOfElevators {
+				found := false
+
+				for _, deadID := range DeadElevatorsID {
+					if elevator.ID == deadID {
+						found = true
+					}
+				}
+
+				if !found {
+					result = append(result, elevator)
+				}
+			}
+			network.ListOfElevators = result
 
 		case elev := <-helloRx:
 			flag := 0

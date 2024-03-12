@@ -2,7 +2,7 @@ package hallassign
 
 import (
 	"Elevator/driver-go-master/elevio"
-	network "Elevator/networkcom"
+	"Elevator/networkcom"
 	"Elevator/utils"
 	"fmt"
 	"time"
@@ -13,6 +13,7 @@ func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv
 	for {
 		select {
 		case E := <-drv_buttons:
+			utils.ElevatorGlob.Requests = OneElevRequests
 			utils.ElevatorGlob.Requests[E.Floor][E.Button] = true
 		case F := <-drv_floors:
 			utils.FsmOnFloorArrival(F)
