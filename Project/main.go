@@ -3,7 +3,7 @@ package main
 import (
 	"Elevator/driver-go-master/elevio"
 	"Elevator/hallassign"
-	network "Elevator/networkcom"
+	"Elevator/networkcom"
 	"Elevator/networkcom/network/bcast"
 	"Elevator/networkcom/network/peers"
 	"Elevator/utils"
@@ -17,7 +17,7 @@ func main() {
 
 	var id string = os.Args[1]
 	id_int, _ := strconv.Atoi(id)
-	port := 15657 + id_int
+	port := 15656 + id_int
 
 	elevio.Init("localhost:"+strconv.Itoa((port)), utils.N_FLOORS)
 
@@ -30,6 +30,7 @@ func main() {
 	go elevio.PollFloorSensor(drv_floors)
 	go elevio.PollObstructionSwitch(drv_obstr)
 	go elevio.PollStopButton(drv_stop)
+
 
 	utils.FsmOnInitBetweenFloors()
 	drv_buttons2 := make(chan elevio.ButtonEvent)
@@ -73,7 +74,7 @@ func main() {
 
 	go hallassign.FSM(helloRx, drv_buttons, drv_floors, drv_obstr, drv_stop)
 
-	go peers.PeersUpdate(drv_buttons, peerUpdateCh, helloRx)
+	go peers.PeersUpdate(drv_buttons2, peerUpdateCh, helloRx)
 
 	select {}
 }
