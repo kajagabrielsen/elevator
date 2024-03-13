@@ -17,14 +17,31 @@ func init() {
 	outputDevice = GetOutputDevice()
 }
 
-func SetAllLights(es Elevator) {
+var GlobalHallCalls = [N_FLOORS][2]bool{}
+
+/*func SetAllLights(es Elevator) {
 	for floor := 0; floor < N_FLOORS; floor++ {
-		for btn := 0; btn < N_BUTTONS; btn++ {
+			for btn := 0; btn < N_BUTTONS; btn++ {
 			var BTN elevio.ButtonType = elevio.ButtonType(btn)
 			outputDevice.RequestButtonLight(floor, BTN, es.Requests[floor][btn])
 		}
 	}
+}*/
+
+func SetAllLights(es Elevator) {
+	for floor := 0; floor < N_FLOORS; floor++ {
+		for btn := 0; btn < N_BUTTONS-1; btn++ {
+			var B elevio.ButtonType = elevio.ButtonType(btn)
+			outputDevice.RequestButtonLight(floor, B, GlobalHallCalls[floor][btn])
+		}
+	}
+
+	for f := 0; f < N_FLOORS; f++ {
+		var b elevio.ButtonType = elevio.ButtonType(2)
+		outputDevice.RequestButtonLight(f, b, es.Requests[f][2])
+	}
 }
+
 
 func FsmOnInitBetweenFloors() {
 	outputDevice.MotorDirection(elevio.MD_Down)

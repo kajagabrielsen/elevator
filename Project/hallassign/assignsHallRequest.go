@@ -17,4 +17,5 @@ func AssignHallRequest() {
 		OneElevRequests[floor][1] = OneElevHallCalls[floor][1]
 		OneElevRequests[floor][2] = OneElevCabCalls[floor]
 	}
+	
 }

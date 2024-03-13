@@ -18,9 +18,11 @@ func FSM(HelloRx  chan network.HelloMsg,
 			utils.ElevatorGlob.Requests = OneElevRequests
 			utils.ElevatorGlob.Requests[E.Floor][E.Button] = true
 			UpdateCabCalls(utils.ElevatorGlob.Requests)
+			GetHallCalls(network.ListOfElevators)
 		case F := <-drv_floors:
 			utils.FsmOnFloorArrival(F, network.ListOfElevators)
 			UpdateCabCalls(utils.ElevatorGlob.Requests)
+			GetHallCalls(network.ListOfElevators)
 		case a := <-drv_obstr:
 			fmt.Printf("%+v\n", a)
 			if a {
@@ -38,8 +40,9 @@ func FSM(HelloRx  chan network.HelloMsg,
 			}
 		case <-time.After(time.Millisecond * time.Duration(utils.DoorOpenDuration*1000)):
 			utils.FsmOnDoorTimeout()
+			GetHallCalls(network.ListOfElevators)
 		}
-		AssignHallRequest()
+		utils.SetAllLights(utils.ElevatorGlob)
 		for floor_num, floor := range OneElevRequests {
 			for btn_num := range floor {
 				if OneElevRequests[floor_num][btn_num] {
@@ -47,5 +50,7 @@ func FSM(HelloRx  chan network.HelloMsg,
 				}
 			}
 		}
+		AssignHallRequest()
+		
 	}
 }
