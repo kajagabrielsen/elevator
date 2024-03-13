@@ -9,7 +9,6 @@ import (
 )
 
 func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr chan bool, drv_stop chan bool) {
-	var d elevio.MotorDirection = elevio.MD_Up
 	for {
 		select {
 		case E := <-drv_buttons:
@@ -22,9 +21,9 @@ func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv
 		case a := <-drv_obstr:
 			fmt.Printf("%+v\n", a)
 			if a {
-				elevio.SetMotorDirection(elevio.MD_Stop)
+				utils.Obstructed = true
 			} else {
-				elevio.SetMotorDirection(d)
+				utils.Obstructed = false
 			}
 
 		case a := <-drv_stop:
