@@ -15,9 +15,10 @@ func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv
 		case E := <-drv_buttons:
 			utils.ElevatorGlob.Requests = OneElevRequests
 			utils.ElevatorGlob.Requests[E.Floor][E.Button] = true
+			UpdateCabCalls(utils.ElevatorGlob.Requests)
 		case F := <-drv_floors:
 			utils.FsmOnFloorArrival(F, network.ListOfElevators)
-			OneElevRequests[F] = [utils.N_BUTTONS]bool{false, false, false}
+			UpdateCabCalls(utils.ElevatorGlob.Requests)
 		case a := <-drv_obstr:
 			fmt.Printf("%+v\n", a)
 			if a {

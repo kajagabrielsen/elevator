@@ -57,16 +57,20 @@ func main() {
 
 	// The example message. We just send one of these every second.
 	go func() {
+		utils.ElevatorGlob.ID = id
+		OneElevCabCalls, _ := hallassign.GetCabCalls(utils.ElevatorGlob)
+		for i, _ := range utils.ElevatorGlob.Requests{
+			utils.ElevatorGlob.Requests[i][2] = OneElevCabCalls[i]
+		}
 		e := utils.ElevatorGlob
 		helloMsg := network.HelloMsg{
 			Elevator: e,
 			Iter:     0,
 		}
 		for {
-			helloMsg.Iter++
-			utils.ElevatorGlob.ID = id
 			helloMsg.Elevator = utils.ElevatorGlob
 			helloTx <- helloMsg
+			helloMsg.Iter++
 			time.Sleep(1 * time.Second)
 		}
 	}()

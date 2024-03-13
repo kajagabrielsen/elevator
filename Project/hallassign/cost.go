@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os/exec"
 	"runtime"
+	"os"
 )
 
 // Struct members must be public in order to be accessible by json.Marshal/.Unmarshal
@@ -128,19 +129,89 @@ func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 }
 
 
-func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
+/**func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
 	CabCalls := [utils.N_FLOORS]bool{}
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
 		CabCalls[floor] = elevator.Requests[floor][2]
 	}
 	return CabCalls
+}**/
+
+func GetCabCalls(elevator utils.Elevator) ([utils.N_FLOORS]bool, error) {
+    data, err := ReadFromJSON("CabCallFile.json")
+    if err != nil {
+        return [utils.N_FLOORS]bool{}, err
+    }
+
+    CabCalls, ok := data[elevator.ID]
+    if !ok {
+        return [utils.N_FLOORS]bool{}, fmt.Errorf("key %s not found in the map", elevator.ID)
+    }
+
+    return CabCalls, nil
+}
+
+
+func UpdateCabCalls(Requests [utils.N_FLOORS][utils.N_BUTTONS]bool) error {
+    // Check if the file already exists
+    _, err := os.Stat("CabCallFile.json")
+    var ExistingCabCallMap map[string][utils.N_FLOORS]bool
+
+    // If the file exists, read the existing data from it
+    if !os.IsNotExist(err) {
+        ExistingCabCallMap, err = ReadFromJSON("CabCallFile.json")
+        if err != nil {
+            return err
+        }
+    } else {
+        // If the file does not exist, create a new map
+        ExistingCabCallMap = make(map[string][utils.N_FLOORS]bool)
+    }
+
+    // Update the existing map with the new data
+	var CabCalls = [utils.N_FLOORS]bool {}
+
+	for i, floor := range Requests{
+		CabCalls[i] = floor[2]
+	}
+
+    ExistingCabCallMap[utils.ElevatorGlob.ID] = CabCalls
+
+    // Write the updated map to the JSON file
+    file, err := os.OpenFile("CabCallFile.json", os.O_RDWR|os.O_CREATE, 0644)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    encoder := json.NewEncoder(file)
+    if err := encoder.Encode(ExistingCabCallMap); err != nil {
+        return err
+    }
+    return nil
+}
+
+
+func ReadFromJSON(fileName string) (map[string][utils.N_FLOORS]bool, error) {
+    file, err := os.Open(fileName)
+    if err != nil {
+        return nil, err
+    }
+    defer file.Close()
+
+    decoder := json.NewDecoder(file)
+    var data map[string][utils.N_FLOORS]bool
+    if err := decoder.Decode(&data); err != nil {
+        return nil, err
+    }
+    return data, nil
 }
 
 func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp {
 	var n_elevators int = len(elevators)
 	myStates := []HRAElevStatetemp{}
 	for i := 0; i < n_elevators; i++ {
-		CabCalls := GetCabCalls(elevators[i])
+		CabCalls,_ := GetCabCalls(elevators[i])
 		elevastate := HRAElevStatetemp{elevators[i].ID, elevators[i].Behaviour, elevators[i].Floor, elevators[i].Dirn, CabCalls}
 		myStates = append(myStates, elevastate)
 	}

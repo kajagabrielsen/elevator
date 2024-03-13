@@ -9,7 +9,7 @@ var OneElevRequests = [utils.N_FLOORS][utils.N_BUTTONS]bool{}
 
 func AssignHallRequest() {
 	AssignedHallCalls := CalculateCostFunc(network.ListOfElevators)
-	OneElevCabCalls := GetCabCalls(utils.ElevatorGlob)
+	OneElevCabCalls,_ := GetCabCalls(utils.ElevatorGlob)
 	OneElevHallCalls := AssignedHallCalls[utils.ElevatorGlob.ID]
 
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
