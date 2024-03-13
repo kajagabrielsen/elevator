@@ -8,7 +8,10 @@ import (
 	"time"
 )
 
-func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv_floors chan int, drv_obstr chan bool, drv_stop chan bool) {
+func FSM(HelloRx  chan network.HelloMsg, 
+	drv_buttons   chan elevio.ButtonEvent, 
+	drv_floors    chan int, drv_obstr chan bool, 
+	drv_stop      chan bool) {
 	for {
 		select {
 		case E := <-drv_buttons:
@@ -37,12 +40,10 @@ func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv
 			utils.FsmOnDoorTimeout()
 		}
 		AssignHallRequest()
-		//UpdateGlobalHallCalls()
 		for floor_num, floor := range OneElevRequests {
 			for btn_num := range floor {
 				if OneElevRequests[floor_num][btn_num] {
 					utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
-					//OneElevRequests[floor_num][btn_num] = false
 				}
 			}
 		}
