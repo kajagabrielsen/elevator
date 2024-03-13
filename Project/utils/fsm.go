@@ -17,9 +17,20 @@ func init() {
 	outputDevice = GetOutputDevice()
 }
 
+var GlobalHallCalls = [N_FLOORS][2]bool{}
+
 func SetAllLights(es Elevator) {
 	for floor := 0; floor < N_FLOORS; floor++ {
-		for btn := 0; btn < N_BUTTONS; btn++ {
+			for btn := 0; btn < N_BUTTONS; btn++ {
+			var BTN elevio.ButtonType = elevio.ButtonType(btn)
+			outputDevice.RequestButtonLight(floor, BTN, es.Requests[floor][btn])
+		}
+	}
+}
+
+func SetGlobalLights(es Elevator) {
+	for floor := 0; floor < N_FLOORS; floor++ {
+			for btn := 0; btn < N_BUTTONS-1; btn++ {
 			var BTN elevio.ButtonType = elevio.ButtonType(btn)
 			outputDevice.RequestButtonLight(floor, BTN, es.Requests[floor][btn])
 		}

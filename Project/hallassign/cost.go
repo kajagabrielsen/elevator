@@ -33,8 +33,6 @@ type HRAInput struct {
 	States       map[string]HRAElevState `json:"states"`
 }
 
-var GlobalHallCalls = [utils.N_FLOORS][2]bool{}
-
 func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2]bool {
 
 	hraExecutable := ""
@@ -122,10 +120,10 @@ func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 			down = down || elevators[i].Requests[floor][1]
 		}
 
-		GlobalHallCalls[floor] = [2]bool{up, down}
+		utils.GlobalHallCalls[floor] = [2]bool{up, down}
 	}
 	//fmt.Println(GlobalHallCalls)
-	return GlobalHallCalls
+	return utils.GlobalHallCalls
 }
 
 
