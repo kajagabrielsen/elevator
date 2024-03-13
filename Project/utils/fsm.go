@@ -49,6 +49,8 @@ func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 
 	case EB_Idle:
 		ElevatorGlob.Requests[btnFloor][btnType] = true
+		//la til den under (gjør at lyset ikke blinker)
+		//ElevatorGlob = RequestsClearAtCurrentFloor(ElevatorGlob)
 		pair := RequestsChooseDirection(ElevatorGlob)
 		ElevatorGlob.Dirn = pair.Dirn
 		ElevatorGlob.Behaviour = pair.Behaviour
@@ -72,7 +74,7 @@ func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
 	ElevatorPrint(ElevatorGlob)
 }
 
-func FsmOnFloorArrival(newFloor int) {
+func FsmOnFloorArrival(newFloor int, elevators []Elevator) {
 	fmt.Printf("\n\n%s(%d)\n", "fsmOnFloorArrival", newFloor)
 	ElevatorPrint(ElevatorGlob)
 
@@ -96,6 +98,13 @@ func FsmOnFloorArrival(newFloor int) {
 
 	fmt.Println("\nNew state:")
 	ElevatorPrint(ElevatorGlob)
+
+	//la til denne under
+	for _,elev := range elevators {
+		if elev.ID == ElevatorGlob.ID {
+			elev.Requests = ElevatorGlob.Requests
+		}
+	}
 }
 
 func FsmOnDoorTimeout() {

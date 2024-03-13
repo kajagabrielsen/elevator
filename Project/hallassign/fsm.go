@@ -16,7 +16,7 @@ func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv
 			utils.ElevatorGlob.Requests = OneElevRequests
 			utils.ElevatorGlob.Requests[E.Floor][E.Button] = true
 		case F := <-drv_floors:
-			utils.FsmOnFloorArrival(F)
+			utils.FsmOnFloorArrival(F, network.ListOfElevators)
 			OneElevRequests[F] = [utils.N_BUTTONS]bool{false, false, false}
 		case a := <-drv_obstr:
 			fmt.Printf("%+v\n", a)
@@ -37,10 +37,12 @@ func FSM(HelloRx chan network.HelloMsg, drv_buttons chan elevio.ButtonEvent, drv
 			utils.FsmOnDoorTimeout()
 		}
 		AssignHallRequest()
+		//UpdateGlobalHallCalls()
 		for floor_num, floor := range OneElevRequests {
 			for btn_num := range floor {
 				if OneElevRequests[floor_num][btn_num] {
 					utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
+					//OneElevRequests[floor_num][btn_num] = false
 				}
 			}
 		}

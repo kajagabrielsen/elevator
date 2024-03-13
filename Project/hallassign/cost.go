@@ -111,7 +111,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 
 func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 	var n_elevators int = len(elevators)
-	fmt.Println(elevators)
+	//fmt.Println(elevators)
 
 	for floor := 0; floor < utils.N_FLOORS; floor++ {
 		up := elevators[0].Requests[floor][0]
@@ -123,7 +123,7 @@ func GetHallCalls(elevators []utils.Elevator) [utils.N_FLOORS][2]bool {
 
 		GlobalHallCalls[floor] = [2]bool{up, down}
 	}
-	fmt.Println(GlobalHallCalls)
+	//fmt.Println(GlobalHallCalls)
 	return GlobalHallCalls
 }
 

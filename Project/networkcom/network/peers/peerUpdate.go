@@ -2,7 +2,8 @@ package peers
 
 import (
 	"Elevator/driver-go-master/elevio"
-	network "Elevator/networkcom"
+	//"Elevator/hallassign"
+	"Elevator/networkcom"
 	"Elevator/utils"
 	"fmt"
 )
@@ -20,6 +21,7 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			fmt.Printf("  Lost:     %q\n", p.Lost)
 			network.AliveElevatorsID = p.Peers
 			DeadElevatorsID = p.Lost
+			//hallassign.UpdateGlobalHallCalls()
 
 			//fjerner lost peers fra ListOfElevators
 			var result []utils.Elevator
@@ -38,6 +40,7 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 				}
 			}
 			network.ListOfElevators = result
+			//hallassign.AssignHallRequest()
 
 		case elev := <-helloRx:
 			flag := 0

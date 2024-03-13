@@ -1,15 +1,14 @@
 package hallassign
 
 import (
-	network "Elevator/networkcom"
+	"Elevator/networkcom"
 	"Elevator/utils"
 )
 
 var OneElevRequests = [utils.N_FLOORS][utils.N_BUTTONS]bool{}
 
 func AssignHallRequest() {
-	ListOfElevators := network.ListOfElevators
-	AssignedHallCalls := CalculateCostFunc(ListOfElevators)
+	AssignedHallCalls := CalculateCostFunc(network.ListOfElevators)
 	OneElevCabCalls := GetCabCalls(utils.ElevatorGlob)
 	OneElevHallCalls := AssignedHallCalls[utils.ElevatorGlob.ID]
 
