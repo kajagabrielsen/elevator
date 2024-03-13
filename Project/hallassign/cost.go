@@ -48,7 +48,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	}
 
 	input := HRAInput{
-		HallRequests: GetHallCalls(elevators),
+		HallRequests: utils.GlobalHallCalls,
 		States:       make(map[string]HRAElevState),
 	}
 

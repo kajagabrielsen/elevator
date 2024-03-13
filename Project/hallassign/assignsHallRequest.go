@@ -18,7 +18,4 @@ func AssignHallRequest() {
 		OneElevRequests[floor][2] = OneElevCabCalls[floor]
 	}
 	
-	for _, element := range network.ListOfElevators{
-		utils.SetGlobalLights(element)
-	}
 }
