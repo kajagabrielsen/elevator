@@ -113,10 +113,13 @@ func FsmOnDoorTimeout() {
 
 	switch ElevatorGlob.Behaviour {
 	case EB_DoorOpen:
+		if Obstructed{
+			TimerStart(ElevatorGlob.DoorOpenDuration_s) 
+		}else{
 		pair := RequestsChooseDirection(ElevatorGlob)
 		ElevatorGlob.Dirn = pair.Dirn
 		ElevatorGlob.Behaviour = pair.Behaviour
-
+		}
 		switch ElevatorGlob.Behaviour {
 		case EB_DoorOpen:
 			TimerStart(ElevatorGlob.DoorOpenDuration_s)

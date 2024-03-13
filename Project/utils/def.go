@@ -11,6 +11,7 @@ var (
 	InputPollRate       = 25
 )
 
+var Obstructed bool
 
 const (
 	N_FLOORS = 4
