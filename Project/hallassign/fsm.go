@@ -37,11 +37,10 @@ func FSM(HelloRx  chan network.HelloMsg,
 			}
 
 		case a := <-drv_stop:
-			fmt.Printf("%+v\n", a)
-			for f := 0; f < utils.N_FLOORS; f++ {
-				for b := elevio.ButtonType(0); b < 3; b++ {
-					elevio.SetButtonLamp(b, f, false)
-				}
+			if a{
+				elevio.SetMotorDirection(elevio.MD_Stop)
+			}else{
+				elevio.SetMotorDirection(elevio.MotorDirection(utils.ElevatorGlob.Dirn))
 			}
 		case <-time.After(time.Millisecond * time.Duration(utils.DoorOpenDuration*1000)):
 			utils.FsmOnDoorTimeout()
