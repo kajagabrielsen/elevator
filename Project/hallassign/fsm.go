@@ -26,9 +26,9 @@ func FSM(HelloRx  chan network.HelloMsg,
 		case a := <-drv_obstr:
 			fmt.Printf("%+v\n", a)
 			if a {
-				utils.Obstructed = true
+				utils.ElevatorGlob.Obstructed = true
 			} else {
-				utils.Obstructed = false
+				utils.ElevatorGlob.Obstructed = false
 			}
 
 		case a := <-drv_stop:
