@@ -27,9 +27,9 @@ func RemoveFromListOfElevators(list []utils.Elevator, elevator utils.Elevator) {
 func AddToListOfElevators(list []utils.Elevator, elevator utils.Elevator) {
 
 	flag := false
-	for _, elev := range list {
+	for i, elev := range list {
 		if elev.ID == elevator.ID {
-			elev = elevator
+			list[i] = elevator
 			flag = true
 		}
 	}

@@ -11,8 +11,6 @@ var (
 	InputPollRate       = 25
 )
 
-var Obstructed bool
-
 const (
 	N_FLOORS = 4
 	N_BUTTONS = 3
@@ -73,6 +71,7 @@ type Elevator struct {
 	ClearRequestVariant  ClearRequestVariantInt
 	DoorOpenDuration_s   float64
 	ID                   string
+	Obstructed           bool
 
 }
 
