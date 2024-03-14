@@ -4,6 +4,7 @@ import (
 	"Elevator/driver-go-master/elevio"
 	"Elevator/hallassign"
 	"Elevator/networkcom"
+	"Elevator/networkcom/network/listUpdate"
 	"Elevator/utils"
 	"fmt"
 )
@@ -43,6 +44,12 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			hallassign.AssignHallRequest()
 
 		case elev := <-helloRx:
+
+			if elev.Elevator.Obstructed {
+				listUpdate.RemoveFromListOfElevators(network.ListOfElevators, elev.Elevator)
+			}
+
+
 			flag := 0
 			for i, element := range network.ListOfElevators {
 				if element.ID == elev.Elevator.ID {
@@ -50,7 +57,7 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 					flag = 1
 				}
 			}
-			if flag == 0 {
+			if flag == 0 && !elev.Elevator.Obstructed{
 				network.ListOfElevators = append(network.ListOfElevators, elev.Elevator)
 
 			}

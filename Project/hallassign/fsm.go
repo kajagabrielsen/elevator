@@ -3,6 +3,7 @@ package hallassign
 import (
 	"Elevator/driver-go-master/elevio"
 	"Elevator/networkcom"
+	"Elevator/networkcom/network/listUpdate"
 	"Elevator/utils"
 	"fmt"
 	"time"
@@ -27,8 +28,12 @@ func FSM(HelloRx  chan network.HelloMsg,
 			fmt.Printf("%+v\n", a)
 			if a {
 				utils.ElevatorGlob.Obstructed = true
+				listUpdate.RemoveFromListOfElevators(network.ListOfElevators, utils.ElevatorGlob)
+
 			} else {
 				utils.ElevatorGlob.Obstructed = false
+				listUpdate.AddToListOfElevators(network.ListOfElevators, utils.ElevatorGlob)
+
 			}
 
 		case a := <-drv_stop:
