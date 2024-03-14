@@ -21,7 +21,7 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			fmt.Printf("  Lost:     %q\n", p.Lost)
 			network.AliveElevatorsID = p.Peers
 			DeadElevatorsID = p.Lost
-			hallassign.GetHallCalls(network.ListOfElevators)
+			hallassign.UpdateGlobalHallCalls(network.ListOfElevators)
 
 			//fjerner lost peers fra ListOfElevators
 			var result []utils.Elevator
