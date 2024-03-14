@@ -76,6 +76,8 @@ func main() {
 	}()
 	fmt.Println("Started")
 
+	go hallassign.DetectMotorStop()
+
 	go hallassign.FSM(helloRx, drv_buttons, drv_floors, drv_obstr, drv_stop)
 
 	go peers.PeersUpdate(drv_buttons2, peerUpdateCh, helloRx)
