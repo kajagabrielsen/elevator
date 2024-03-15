@@ -2,14 +2,13 @@ package fsm
 
 import (
 	"Elevator/driver_go_master/elevio"
-	"Elevator/elevator/initialize"
+	"Elevator/elevator/initial"
 	"Elevator/elevator/log"
 	"Elevator/elevator/request"
-	"Elevator/utils"
 	"fmt"
 )
 
-var GlobalHallCalls = [initialize.N_FLOORS][2]bool{}
+var GlobalHallCalls = [initial.NFloors][2]bool{}
 
 func ButtonToString(b elevio.ButtonType) string {
 	switch b {
@@ -24,125 +23,117 @@ func ButtonToString(b elevio.ButtonType) string {
 	}
 }
 
-func SetAllLights(es initialize.Elevator) {
-	for floor := 0; floor < initialize.N_FLOORS; floor++ {
-		for btn := 0; btn < initialize.N_BUTTONS-1; btn++ {
+func SetAllLights(es initial.Elevator) {
+	for floor := 0; floor < initial.NFloors; floor++ {
+		for btn := 0; btn < initial.NButtons-1; btn++ {
 			var B elevio.ButtonType = elevio.ButtonType(btn)
-			initialize.OutputDevice.RequestButtonLight(floor, B, GlobalHallCalls[floor][btn])
+			initial.OutputDevice.RequestButtonLight(floor, B, GlobalHallCalls[floor][btn])
 		}
 	}
 
-	for f := 0; f < initialize.N_FLOORS; f++ {
+	for f := 0; f < initial.NFloors; f++ {
 		var b elevio.ButtonType = elevio.ButtonType(2)
-		initialize.OutputDevice.RequestButtonLight(f, b, es.Requests[f][2])
+		initial.OutputDevice.RequestButtonLight(f, b, es.Requests[f][2])
 	}
 }
 
 
 func FsmOnInitBetweenFloors() {
-	initialize.OutputDevice.MotorDirection(elevio.MDDown)
-	initialize.ElevatorGlob.Dirn = elevio.MDDown
-	initialize.ElevatorGlob.Behaviour = initialize.EB_Moving
+	initial.OutputDevice.MotorDirection(elevio.MDDown)
+	initial.ElevatorGlob.Dirn = elevio.MDDown
+	initial.ElevatorGlob.Behaviour = initial.EBMoving
 }
 
 func FsmOnRequestButtonPress(btnFloor int, btnType elevio.ButtonType) {
 	fmt.Printf("\n\n%s(%d, %s)\n", "fsmOnRequestButtonPress", btnFloor, ButtonToString(btnType))
-	log.ElevatorLog(initialize.ElevatorGlob)
+	log.ElevatorLog(initial.ElevatorGlob)
 
-	switch initialize.ElevatorGlob.Behaviour {
-	case initialize.EB_DoorOpen:
-		if request.RequestsShouldClearImmediately(initialize.ElevatorGlob, btnFloor, btnType) {
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
-		} else {
-			initialize.ElevatorGlob.Requests[btnFloor][btnType] = true
+	switch initial.ElevatorGlob.Behaviour {
+	case initial.EBDoorOpen:
+		if !request.RequestsShouldClearImmediately(initial.ElevatorGlob, btnFloor, btnType) {
+			initial.ElevatorGlob.Requests[btnFloor][btnType] = true
 		}
 
-	case initialize.EB_Moving:
-		initialize.ElevatorGlob.Requests[btnFloor][btnType] = true
+	case initial.EBMoving:
+		initial.ElevatorGlob.Requests[btnFloor][btnType] = true
 
-	case initialize.EB_Idle:
-		initialize.ElevatorGlob.Requests[btnFloor][btnType] = true
-		pair := request.RequestsChooseDirection(initialize.ElevatorGlob)
-		initialize.ElevatorGlob.Dirn = pair.Dirn
-		initialize.ElevatorGlob.Behaviour = pair.Behaviour
+	case initial.EBIdle:
+		initial.ElevatorGlob.Requests[btnFloor][btnType] = true
+		pair := request.RequestsChooseDirection(initial.ElevatorGlob)
+		initial.ElevatorGlob.Dirn = pair.Dirn
+		initial.ElevatorGlob.Behaviour = pair.Behaviour
 		switch pair.Behaviour {
-		case initialize.EB_DoorOpen:
-			initialize.OutputDevice.DoorLight(true)
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
-			initialize.ElevatorGlob = request.RequestsClearAtCurrentFloor(initialize.ElevatorGlob)
+		case initial.EBDoorOpen:
+			initial.OutputDevice.DoorLight(true)
+			initial.ElevatorGlob = request.RequestsClearAtCurrentFloor(initial.ElevatorGlob)
+		case initial.EBMoving:
+			var mot_dir elevio.MotorDirection = elevio.MotorDirection(initial.ElevatorGlob.Dirn)
+			initial.OutputDevice.MotorDirection(mot_dir)
 
-		case initialize.EB_Moving:
-			var mot_dir elevio.MotorDirection = elevio.MotorDirection(initialize.ElevatorGlob.Dirn)
-			initialize.OutputDevice.MotorDirection(mot_dir)
-
-		case initialize.EB_Idle:
+		case initial.EBIdle:
 		}
 	}
 
-	SetAllLights(initialize.ElevatorGlob)
+	SetAllLights(initial.ElevatorGlob)
 
 	fmt.Println("\nNew state:")
-	log.ElevatorLog(initialize.ElevatorGlob)
+	log.ElevatorLog(initial.ElevatorGlob)
 }
 
-func FsmOnFloorArrival(newFloor int, elevators []initialize.Elevator) {
+func FsmOnFloorArrival(newFloor int, elevators []initial.Elevator) {
 	fmt.Printf("\n\n%s(%d)\n", "fsmOnFloorArrival", newFloor)
-	log.ElevatorLog(initialize.ElevatorGlob)
+	log.ElevatorLog(initial.ElevatorGlob)
 
-	initialize.ElevatorGlob.Floor = newFloor
+	initial.ElevatorGlob.Floor = newFloor
 
-	initialize.OutputDevice.FloorIndicator(initialize.ElevatorGlob.Floor)
+	initial.OutputDevice.FloorIndicator(initial.ElevatorGlob.Floor)
 
-	switch initialize.ElevatorGlob.Behaviour {
-	case initialize.EB_Moving:
-		if request.RequestsShouldStop(initialize.ElevatorGlob) {
-			initialize.OutputDevice.MotorDirection(elevio.MDStop)
-			initialize.OutputDevice.DoorLight(true)
-			initialize.ElevatorGlob = request.RequestsClearAtCurrentFloor(initialize.ElevatorGlob)
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
-			SetAllLights(initialize.ElevatorGlob)
-			initialize.ElevatorGlob.Behaviour = initialize.EB_DoorOpen
+	switch initial.ElevatorGlob.Behaviour {
+	case initial.EBMoving:
+		if request.RequestsShouldStop(initial.ElevatorGlob) {
+			initial.OutputDevice.MotorDirection(elevio.MDStop)
+			initial.OutputDevice.DoorLight(true)
+			initial.ElevatorGlob = request.RequestsClearAtCurrentFloor(initial.ElevatorGlob)
+			SetAllLights(initial.ElevatorGlob)
+			initial.ElevatorGlob.Behaviour = initial.EBDoorOpen
 		}
 	default:
 		break
 	}
 
 	fmt.Println("\nNew state:")
-	log.ElevatorLog(initialize.ElevatorGlob)
+	log.ElevatorLog(initial.ElevatorGlob)
 
 	for _,elev := range elevators {
-		if elev.ID == initialize.ElevatorGlob.ID {
-			elev.Requests = initialize.ElevatorGlob.Requests
+		if elev.ID == initial.ElevatorGlob.ID {
+			elev.Requests = initial.ElevatorGlob.Requests
 		}
 	}
 }
 
 func FsmOnDoorTimeout() {
 	fmt.Printf("\n\n%s()\n", "fsmOnDoorTimeout")
-	log.ElevatorLog(initialize.ElevatorGlob)
+	log.ElevatorLog(initial.ElevatorGlob)
 
-	switch initialize.ElevatorGlob.Behaviour {
-	case initialize.EB_DoorOpen:
-		if initialize.ElevatorGlob.Obstructed{
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration) 
-		}else{
-		pair := request.RequestsChooseDirection(initialize.ElevatorGlob)
-		initialize.ElevatorGlob.Dirn = pair.Dirn
-		initialize.ElevatorGlob.Behaviour = pair.Behaviour
+	switch initial.ElevatorGlob.Behaviour {
+	case initial.EBDoorOpen:
+		if !initial.ElevatorGlob.Obstructed{
+		pair := request.RequestsChooseDirection(initial.ElevatorGlob)
+		initial.ElevatorGlob.Dirn = pair.Dirn
+		initial.ElevatorGlob.Behaviour = pair.Behaviour
 		}
-		switch initialize.ElevatorGlob.Behaviour {
-		case initialize.EB_DoorOpen:
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
-			initialize.ElevatorGlob = request.RequestsClearAtCurrentFloor(initialize.ElevatorGlob)
-			SetAllLights(initialize.ElevatorGlob)
-		case initialize.EB_Moving:
-			initialize.OutputDevice.DoorLight(false)
-			var mot_dir elevio.MotorDirection = elevio.MotorDirection(initialize.ElevatorGlob.Dirn)
-			initialize.OutputDevice.MotorDirection(mot_dir)
-		case initialize.EB_Idle:
-			initialize.OutputDevice.DoorLight(false)
-			var mot_dir elevio.MotorDirection = elevio.MotorDirection(initialize.ElevatorGlob.Dirn)
-			initialize.OutputDevice.MotorDirection(mot_dir)
+		switch initial.ElevatorGlob.Behaviour {
+		case initial.EBDoorOpen:
+			initial.ElevatorGlob = request.RequestsClearAtCurrentFloor(initial.ElevatorGlob)
+			SetAllLights(initial.ElevatorGlob)
+		case initial.EBMoving:
+			initial.OutputDevice.DoorLight(false)
+			var mot_dir elevio.MotorDirection = elevio.MotorDirection(initial.ElevatorGlob.Dirn)
+			initial.OutputDevice.MotorDirection(mot_dir)
+		case initial.EBIdle:
+			initial.OutputDevice.DoorLight(false)
+			var mot_dir elevio.MotorDirection = elevio.MotorDirection(initial.ElevatorGlob.Dirn)
+			initial.OutputDevice.MotorDirection(mot_dir)
 		}
 
 	default:
@@ -150,5 +141,5 @@ func FsmOnDoorTimeout() {
 	}
 
 	fmt.Println("\nNew state:")
-	log.ElevatorLog(initialize.ElevatorGlob)
+	log.ElevatorLog(initial.ElevatorGlob)
 }

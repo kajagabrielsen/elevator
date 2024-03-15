@@ -1,16 +1,16 @@
 package cost
 
 import (
-	"Elevator/elevator/initialize"
-	"Elevator/elevator/fsm_func"
-	"Elevator/hallassign/call_handling"
+	fsm "Elevator/elevator/fsm_func"
+	"Elevator/elevator/initial"
+	call "Elevator/hallassign/call_handling"
 	"encoding/json"
 	"fmt"
 	"os/exec"
 	"runtime"
 )
 
-func CalculateCostFunc(elevators []initialize.Elevator) map[string][initialize.N_FLOORS][2]bool {
+func CalculateCostFunc(elevators []initial.Elevator) map[string][initial.NFloors][2]bool {
 
 	hraExecutable := ""
 	switch runtime.GOOS {
@@ -54,21 +54,18 @@ func CalculateCostFunc(elevators []initialize.Elevator) map[string][initialize.N
 		}
 	}
 
-	//Convert input to json format
 	jsonBytes, err := json.Marshal(input)
 	if err != nil {
 		fmt.Println("json.Marshal error: ", err)
 	}
 
-	//runds the hall_request_assigner file
 	ret, err := exec.Command( hraExecutable, "-i", string(jsonBytes)).CombinedOutput()
 	if err != nil {
 		fmt.Println("exec.Command error: ", err)
 		fmt.Println(string(ret))
 	}
 
-	//convert the json received from hall_request_assigner to output
-	output := make(map[string][initialize.N_FLOORS][2]bool)
+	output := make(map[string][initial.NFloors][2]bool)
 	err = json.Unmarshal(ret, &output)
 	if err != nil {
 		fmt.Println("json.Unmarshal error: ", err)

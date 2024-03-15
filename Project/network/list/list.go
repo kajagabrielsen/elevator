@@ -1,18 +1,17 @@
 package list
 
 import (
-	"Elevator/elevator/initialize"
+	"Elevator/elevator/initial"
 )
 
-var ListOfElevators []initialize.Elevator
+// ListOfElevators holds all elevators available to take hall calls
+var ListOfElevators []initial.Elevator
 
-//tar inn en liste av heiser og en heis, fjerner heisen fra lista og oppdaterer
-func RemoveFromListOfElevators(list []initialize.Elevator, elevator initialize.Elevator) {
-	var updatedList []initialize.Elevator
-
+func RemoveFromListOfElevators(list []initial.Elevator, id string) {
+	var updatedList []initial.Elevator
 	for _, elev := range list {
 		found := false
-		if elev == elevator {
+		if elev.ID == id {
 			found = true
 			break
 		}
@@ -23,20 +22,16 @@ func RemoveFromListOfElevators(list []initialize.Elevator, elevator initialize.E
 	ListOfElevators = updatedList
 }
 
-//tar inn en liste av heiser og en heis, legger til heisen i lista dersom den ikke finnes fra før og ikke er Obstructed
-//oppdaterer den i lista dersom den finnes fra før
-func AddToListOfElevators(list []initialize.Elevator, elevator initialize.Elevator) {
-
-	flag := false
+func AddToListOfElevators(list []initial.Elevator, elevator initial.Elevator) {
+	found := false
 	for i, elev := range list {
 		if elev.ID == elevator.ID {
 			list[i] = elevator
-			flag = true
+			found = true
 		}
 	}
-	if !flag && !elevator.Obstructed {
+	if !found && !elevator.Obstructed{
 		list = append(list, elevator)
 	}
-
 	ListOfElevators = list
 }
