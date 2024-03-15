@@ -46,10 +46,10 @@ type Elevator struct {
 
 var OutputDevice ElevOutputDevice
 
-type ElevOutputDevice struct {
-	FloorIndicator     func(int)
-	RequestButtonLight func(int, elevio.ButtonType, bool)
-	DoorLight          func(bool)
+type ElevOutputDevice 	struct {
+	FloorIndicator      func(int)
+	RequestButtonLight  func(int, elevio.ButtonType, bool)
+	DoorLight           func(bool)
 	StopButtonLight     func(bool)
 	MotorDirection      func(elevio.MotorDirection)
 }
@@ -57,12 +57,12 @@ type ElevOutputDevice struct {
 //Initializing the elevator with starting values
 func ElevatorInitialized() Elevator {
 	return Elevator{
-		Floor:     1,
-		Dirn:      elevio.MDStop,
-		Behaviour: EBIdle,
-		ClearRequestVariant: CV_All,
-		DoorOpenDuration:   3.0,
-		ID: "0",
+		Floor:     			   1,
+		Dirn:      			   elevio.MDStop,
+		Behaviour:		   	   EBIdle,
+		ClearRequestVariant:   CV_All,
+		DoorOpenDuration:      3.0,
+		ID:					   "0",
 	}
 }
 

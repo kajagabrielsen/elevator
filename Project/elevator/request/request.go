@@ -5,7 +5,6 @@ import (
 	"Elevator/elevator/initial"
 )
 
-
 type DirnBehaviourPair struct {
 	Dirn      elevio.MotorDirection
 	Behaviour initial.ElevatorBehaviour
@@ -97,45 +96,12 @@ func RequestsShouldStop(e initial.Elevator) bool {
 }
 
 func RequestsShouldClearImmediately(e initial.Elevator, btnFloor int, btnType elevio.ButtonType) bool {
-	switch e.ClearRequestVariant {
-	case initial.CV_All:
-		return e.Floor == btnFloor
-	case initial.CV_InDirn:
-		return e.Floor == btnFloor &&
-			((e.Dirn == elevio.MDUp && btnType == elevio.BTHallUp) ||
-				(e.Dirn == elevio.MDDown && btnType == elevio.BTHallDown) ||
-				e.Dirn == elevio.MDStop ||
-				btnType == elevio.BTCab)
-	default:
-		return false
-	}
+	return e.Floor == btnFloor
 }
 
 func RequestsClearAtCurrentFloor(e initial.Elevator) initial.Elevator {
-	switch e.ClearRequestVariant {
-	case initial.CV_All:
-		for btn := 0; btn < initial.NButtons; btn++ {
-			e.Requests[e.Floor][btn] = false
-		}
-	case initial.CV_InDirn:
-		e.Requests[e.Floor][elevio.BTCab] = false
-		switch e.Dirn {
-		case elevio.MDUp:
-			if !RequestsAbove(e) && !e.Requests[e.Floor][elevio.BTHallUp] {
-				e.Requests[e.Floor][elevio.BTHallDown] = false
-			}
-			e.Requests[e.Floor][elevio.BTHallUp] = false
-		case elevio.MDDown:
-			if !RequestsBelow(e) && !e.Requests[e.Floor][elevio.BTHallDown] {
-				e.Requests[e.Floor][elevio.BTHallUp] = false
-			}
-			e.Requests[e.Floor][elevio.BTHallDown] = false
-		case elevio.MDStop:
-		default:
-			e.Requests[e.Floor][elevio.BTHallUp] = false
-			e.Requests[e.Floor][elevio.BTHallDown] = false
-		}
-	default:
+	for btn := 0; btn < initial.NButtons; btn++ {
+		e.Requests[e.Floor][btn] = false
 	}
 	return e
 }

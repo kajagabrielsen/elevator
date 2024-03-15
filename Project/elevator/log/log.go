@@ -61,14 +61,3 @@ func ElevatorLog(es initial.Elevator) {
 	}
 	fmt.Println("  +--------------------+")
 }
-
-func ElevatorInitialized() initial.Elevator {
-	return initial.Elevator{
-		Floor:     1,
-		Dirn:      elevio.MDStop,
-		Behaviour: initial.EBIdle,
-		ClearRequestVariant: initial.CV_All,
-		DoorOpenDuration:   3.0,
-		ID: "5",
-	}
-}
