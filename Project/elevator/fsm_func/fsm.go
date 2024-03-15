@@ -5,7 +5,6 @@ import (
 	"Elevator/elevator/initialize"
 	"Elevator/elevator/log"
 	"Elevator/elevator/request"
-	"Elevator/utils"
 	"fmt"
 )
 
@@ -51,9 +50,7 @@ func FsmOnRequestButtonPress(btnFloor int, btnType elevio.ButtonType) {
 
 	switch initialize.ElevatorGlob.Behaviour {
 	case initialize.EB_DoorOpen:
-		if request.RequestsShouldClearImmediately(initialize.ElevatorGlob, btnFloor, btnType) {
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
-		} else {
+		if !request.RequestsShouldClearImmediately(initialize.ElevatorGlob, btnFloor, btnType) {
 			initialize.ElevatorGlob.Requests[btnFloor][btnType] = true
 		}
 
@@ -68,9 +65,7 @@ func FsmOnRequestButtonPress(btnFloor int, btnType elevio.ButtonType) {
 		switch pair.Behaviour {
 		case initialize.EB_DoorOpen:
 			initialize.OutputDevice.DoorLight(true)
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
 			initialize.ElevatorGlob = request.RequestsClearAtCurrentFloor(initialize.ElevatorGlob)
-
 		case initialize.EB_Moving:
 			var mot_dir elevio.MotorDirection = elevio.MotorDirection(initialize.ElevatorGlob.Dirn)
 			initialize.OutputDevice.MotorDirection(mot_dir)
@@ -99,7 +94,6 @@ func FsmOnFloorArrival(newFloor int, elevators []initialize.Elevator) {
 			initialize.OutputDevice.MotorDirection(elevio.MDStop)
 			initialize.OutputDevice.DoorLight(true)
 			initialize.ElevatorGlob = request.RequestsClearAtCurrentFloor(initialize.ElevatorGlob)
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
 			SetAllLights(initialize.ElevatorGlob)
 			initialize.ElevatorGlob.Behaviour = initialize.EB_DoorOpen
 		}
@@ -123,16 +117,13 @@ func FsmOnDoorTimeout() {
 
 	switch initialize.ElevatorGlob.Behaviour {
 	case initialize.EB_DoorOpen:
-		if initialize.ElevatorGlob.Obstructed{
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration) 
-		}else{
+		if !initialize.ElevatorGlob.Obstructed{
 		pair := request.RequestsChooseDirection(initialize.ElevatorGlob)
 		initialize.ElevatorGlob.Dirn = pair.Dirn
 		initialize.ElevatorGlob.Behaviour = pair.Behaviour
 		}
 		switch initialize.ElevatorGlob.Behaviour {
 		case initialize.EB_DoorOpen:
-			utils.TimerStart(initialize.ElevatorGlob.DoorOpenDuration)
 			initialize.ElevatorGlob = request.RequestsClearAtCurrentFloor(initialize.ElevatorGlob)
 			SetAllLights(initialize.ElevatorGlob)
 		case initialize.EB_Moving:
