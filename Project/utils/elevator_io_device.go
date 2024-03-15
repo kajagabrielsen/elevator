@@ -5,7 +5,7 @@ import (
 )
 
 func Init(addr string, numFloors int) {
-	elevio.Init(addr, numFloors)
+	elevio.InitDriver(addr, numFloors)
 }
 
 func WrapRequestButton(floor int, button elevio.ButtonType) bool {
@@ -42,13 +42,13 @@ func GetOutputDevice() ElevOutputDevice {
 }
 
 // DirnToString converts Direction to a string.
-func DirnToString(d Dirn) string {
+func DirnToString(d elevio.MotorDirection) string {
 	switch d {
-	case D_Up:
+	case elevio.MDUp:
 		return "D_Up"
-	case D_Down:
+	case elevio.MDDown:
 		return "D_Down"
-	case D_Stop:
+	case elevio.MDStop:
 		return "D_Stop"
 	default:
 		return "D_UNDEFINED"
@@ -56,13 +56,13 @@ func DirnToString(d Dirn) string {
 }
 
 // ButtonToString converts Button to a string.
-func ButtonToString(b Button) string {
+func ButtonToString(b elevio.ButtonType) string {
 	switch b {
-	case B_HallUp:
+	case elevio.BTHallUp:
 		return "B_HallUp"
-	case B_HallDown:
+	case elevio.BTHallDown:
 		return "B_HallDown"
-	case B_Cab:
+	case elevio.BTCab:
 		return "B_Cab"
 	default:
 		return "B_UNDEFINED"

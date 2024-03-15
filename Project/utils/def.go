@@ -16,22 +16,6 @@ const (
 	N_BUTTONS = 3
 )
 
-type Dirn int
-
-const (
-	D_Down Dirn = -1
-	D_Stop      = 0
-	D_Up        = 1
-)
-
-type Button int
-
-const (
-	B_HallUp Button = iota
-	B_HallDown
-	B_Cab
-)
-
 type ElevInputDevice struct {
 	FloorSensor    func(chan<- int)
 	RequestButton  func(int, elevio.ButtonType) bool
@@ -65,7 +49,7 @@ const (
 
 type Elevator struct {
 	Floor                int
-	Dirn                 Dirn
+	Dirn                 elevio.MotorDirection
 	Requests             [N_FLOORS][N_BUTTONS]bool
 	Behaviour            ElevatorBehaviour
 	ClearRequestVariant  ClearRequestVariantInt
@@ -76,6 +60,6 @@ type Elevator struct {
 }
 
 type DirnBehaviourPair struct {
-	Dirn      Dirn
+	Dirn      elevio.MotorDirection
 	Behaviour ElevatorBehaviour
 }
