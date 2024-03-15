@@ -2,7 +2,8 @@ package hallassign
 
 import (
 	"Elevator/driver_go_master/elevio"
-	"Elevator/utils"
+	"Elevator/elevator/initialize"
+	"Elevator/elevator/fsm_func"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -18,23 +19,23 @@ type HRAElevState struct {
 	Behaviour   string `json:"behaviour"`
 	Floor       int    `json:"floor"`
 	Direction   string `json:"direction"`
-	CabRequests [utils.N_FLOORS]bool `json:"cabRequests"`
+	CabRequests [initialize.N_FLOORS]bool `json:"cabRequests"`
 }
 
 type HRAElevStatetemp struct {
 	ElevID      string                     `json:"id"`
-	Behaviour   utils.ElevatorBehaviour `json:"behaviour"`
+	Behaviour   initialize.ElevatorBehaviour `json:"behaviour"`
 	Floor       int                     `json:"floor"`
 	Direction   elevio.MotorDirection              `json:"direction"`
-	CabRequests [utils.N_FLOORS]bool    `json:"cabRequests"`
+	CabRequests [initialize.N_FLOORS]bool    `json:"cabRequests"`
 }
 
 type HRAInput struct {
-	HallRequests [utils.N_FLOORS][2]bool `json:"hallRequests"`
+	HallRequests [initialize.N_FLOORS][2]bool `json:"hallRequests"`
 	States       map[string]HRAElevState `json:"states"`
 }
 
-func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2]bool {
+func CalculateCostFunc(elevators []initialize.Elevator) map[string][initialize.N_FLOORS][2]bool {
 
 	hraExecutable := ""
 	switch runtime.GOOS {
@@ -49,7 +50,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	}
 
 	input := HRAInput{
-		HallRequests: utils.GlobalHallCalls,
+		HallRequests: fsm.GlobalHallCalls,
 		States:       make(map[string]HRAElevState),
 	}
 
@@ -94,7 +95,7 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	}
 
 	//convert the json received from hall_request_assigner to output
-	output := make(map[string][utils.N_FLOORS][2]bool)
+	output := make(map[string][initialize.N_FLOORS][2]bool)
 	err = json.Unmarshal(ret, &output)
 	if err != nil {
 		fmt.Println("json.Unmarshal error: ", err)
@@ -109,11 +110,11 @@ func CalculateCostFunc(elevators []utils.Elevator) map[string][utils.N_FLOORS][2
 	return output
 }
 
-func UpdateGlobalHallCalls(elevators []utils.Elevator) {
+func UpdateGlobalHallCalls(elevators []initialize.Elevator) {
 	var n_elevators int = len(elevators)
 	//fmt.Println(elevators)
 
-	for floor := 0; floor < utils.N_FLOORS; floor++ {
+	for floor := 0; floor < initialize.N_FLOORS; floor++ {
 		up := elevators[0].Requests[floor][0]
 		down := elevators[0].Requests[floor][1]
 		for i := 0; i < n_elevators; i++ {
@@ -121,39 +122,31 @@ func UpdateGlobalHallCalls(elevators []utils.Elevator) {
 			down = down || elevators[i].Requests[floor][1]
 		}
 
-		utils.GlobalHallCalls[floor] = [2]bool{up, down}
+		fsm.GlobalHallCalls[floor] = [2]bool{up, down}
 	}
 	
 }
 
 
-/**func GetCabCalls(elevator utils.Elevator) [utils.N_FLOORS]bool {
-	CabCalls := [utils.N_FLOORS]bool{}
-	for floor := 0; floor < utils.N_FLOORS; floor++ {
-		CabCalls[floor] = elevator.Requests[floor][2]
-	}
-	return CabCalls
-}**/
-
-func GetCabCalls(elevator utils.Elevator) ([utils.N_FLOORS]bool, error) {
+func GetCabCalls(elevator initialize.Elevator) ([initialize.N_FLOORS]bool, error) {
     data, err := ReadFromJSON("CabCallFile.json")
     if err != nil {
-        return [utils.N_FLOORS]bool{}, err
+        return [initialize.N_FLOORS]bool{}, err
     }
 
     CabCalls, ok := data[elevator.ID]
     if !ok {
-        return [utils.N_FLOORS]bool{}, fmt.Errorf("key %s not found in the map", elevator.ID)
+        return [initialize.N_FLOORS]bool{}, fmt.Errorf("key %s not found in the map", elevator.ID)
     }
 
     return CabCalls, nil
 }
 
 
-func UpdateCabCalls(Requests [utils.N_FLOORS][utils.N_BUTTONS]bool) error {
+func UpdateCabCalls(Requests [initialize.N_FLOORS][initialize.N_BUTTONS]bool) error {
     // Check if the file already exists
     _, err := os.Stat("CabCallFile.json")
-    var ExistingCabCallMap map[string][utils.N_FLOORS]bool
+    var ExistingCabCallMap map[string][initialize.N_FLOORS]bool
 
     // If the file exists, read the existing data from it
     if !os.IsNotExist(err) {
@@ -163,17 +156,17 @@ func UpdateCabCalls(Requests [utils.N_FLOORS][utils.N_BUTTONS]bool) error {
         }
     } else {
         // If the file does not exist, create a new map
-        ExistingCabCallMap = make(map[string][utils.N_FLOORS]bool)
+        ExistingCabCallMap = make(map[string][initialize.N_FLOORS]bool)
     }
 
     // Update the existing map with the new data
-	var CabCalls = [utils.N_FLOORS]bool {}
+	var CabCalls = [initialize.N_FLOORS]bool {}
 
 	for i, floor := range Requests{
 		CabCalls[i] = floor[2]
 	}
 
-    ExistingCabCallMap[utils.ElevatorGlob.ID] = CabCalls
+    ExistingCabCallMap[initialize.ElevatorGlob.ID] = CabCalls
 
     // Write the updated map to the JSON file
     file, err := os.OpenFile("CabCallFile.json", os.O_RDWR|os.O_CREATE, 0644)
@@ -190,7 +183,7 @@ func UpdateCabCalls(Requests [utils.N_FLOORS][utils.N_BUTTONS]bool) error {
 }
 
 
-func ReadFromJSON(fileName string) (map[string][utils.N_FLOORS]bool, error) {
+func ReadFromJSON(fileName string) (map[string][initialize.N_FLOORS]bool, error) {
     file, err := os.Open(fileName)
     if err != nil {
         return nil, err
@@ -198,14 +191,14 @@ func ReadFromJSON(fileName string) (map[string][utils.N_FLOORS]bool, error) {
     defer file.Close()
 
     decoder := json.NewDecoder(file)
-    var data map[string][utils.N_FLOORS]bool
+    var data map[string][initialize.N_FLOORS]bool
     if err := decoder.Decode(&data); err != nil {
         return nil, err
     }
     return data, nil
 }
 
-func GetMyStates(elevators []utils.Elevator) []HRAElevStatetemp {
+func GetMyStates(elevators []initialize.Elevator) []HRAElevStatetemp {
 	var n_elevators int = len(elevators)
 	myStates := []HRAElevStatetemp{}
 	for i := 0; i < n_elevators; i++ {

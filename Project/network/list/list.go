@@ -1,14 +1,14 @@
-package listUpdate
+package list
 
 import (
-	"Elevator/utils"
-	"Elevator/networkcom"
+	"Elevator/elevator/initialize"
 )
 
+var ListOfElevators []initialize.Elevator
 
 //tar inn en liste av heiser og en heis, fjerner heisen fra lista og oppdaterer
-func RemoveFromListOfElevators(list []utils.Elevator, elevator utils.Elevator) {
-	var updatedList []utils.Elevator
+func RemoveFromListOfElevators(list []initialize.Elevator, elevator initialize.Elevator) {
+	var updatedList []initialize.Elevator
 
 	for _, elev := range list {
 		found := false
@@ -20,12 +20,12 @@ func RemoveFromListOfElevators(list []utils.Elevator, elevator utils.Elevator) {
 			updatedList = append(updatedList, elev)
 		}
 	}
-	network.ListOfElevators = updatedList
+	ListOfElevators = updatedList
 }
 
 //tar inn en liste av heiser og en heis, legger til heisen i lista dersom den ikke finnes fra før og ikke er Obstructed
 //oppdaterer den i lista dersom den finnes fra før
-func AddToListOfElevators(list []utils.Elevator, elevator utils.Elevator) {
+func AddToListOfElevators(list []initialize.Elevator, elevator initialize.Elevator) {
 
 	flag := false
 	for i, elev := range list {
@@ -38,5 +38,5 @@ func AddToListOfElevators(list []utils.Elevator, elevator utils.Elevator) {
 		list = append(list, elevator)
 	}
 
-	network.ListOfElevators = list
+	ListOfElevators = list
 }

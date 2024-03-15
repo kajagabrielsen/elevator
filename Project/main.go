@@ -2,11 +2,11 @@ package main
 
 import (
 	"Elevator/driver_go_master/elevio"
+	"Elevator/elevator/initialize"
+	"Elevator/elevator/fsm_func"
 	"Elevator/hallassign"
-	"Elevator/networkcom"
-	"Elevator/networkcom/network/bcast"
-	"Elevator/networkcom/network/peers"
-	"Elevator/utils"
+	"Elevator/network/bcast"
+	"Elevator/network/peers"
 	"fmt"
 	"os"
 	"strconv"
@@ -19,7 +19,7 @@ func main() {
 	id_int, _ := strconv.Atoi(id)
 	port := 15656 + id_int
 
-	elevio.InitDriver("localhost:"+strconv.Itoa((port)), utils.N_FLOORS)
+	elevio.InitDriver("localhost:"+strconv.Itoa((port)), initialize.N_FLOORS)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)
@@ -32,7 +32,7 @@ func main() {
 	go elevio.PollStopButton(drv_stop)
 
 
-	utils.FsmOnInitBetweenFloors()
+	fsm.FsmOnInitBetweenFloors()
 	drv_buttons2 := make(chan elevio.ButtonEvent)
 	go elevio.PollButtons(drv_buttons2)
 
@@ -46,8 +46,8 @@ func main() {
 	go peers.Receiver(15611, peerUpdateCh)
 
 	// We make channels for sending and receiving our custom data types
-	helloTx := make(chan network.HelloMsg)
-	helloRx := make(chan network.HelloMsg)
+	helloTx := make(chan peers.HelloMsg)
+	helloRx := make(chan peers.HelloMsg)
 
 	// ... and start the transmitter/receiver pair on some port
 	// These functions can take any number of channels! It is also possible to
@@ -57,18 +57,18 @@ func main() {
 
 	// The example message. We just send one of these every second.
 	go func() {
-		utils.ElevatorGlob.ID = id
-		OneElevCabCalls, _ := hallassign.GetCabCalls(utils.ElevatorGlob)
-		for i := range utils.ElevatorGlob.Requests{
-			utils.ElevatorGlob.Requests[i][2] = OneElevCabCalls[i]
+		initialize.ElevatorGlob.ID = id
+		OneElevCabCalls, _ := hallassign.GetCabCalls(initialize.ElevatorGlob)
+		for i := range initialize.ElevatorGlob.Requests{
+			initialize.ElevatorGlob.Requests[i][2] = OneElevCabCalls[i]
 		}
-		e := utils.ElevatorGlob
-		helloMsg := network.HelloMsg{
+		e := initialize.ElevatorGlob
+		helloMsg := peers.HelloMsg{
 			Elevator: e,
 			Iter:     0,
 		}
 		for {
-			helloMsg.Elevator = utils.ElevatorGlob
+			helloMsg.Elevator = initialize.ElevatorGlob
 			helloTx <- helloMsg
 			helloMsg.Iter++
 			time.Sleep(1 * time.Second)
@@ -78,7 +78,7 @@ func main() {
 
 	go hallassign.DetectMotorStop()
 
-	go hallassign.FSM(helloRx, drv_buttons, drv_floors, drv_obstr, drv_stop)
+	go hallassign.FSM(drv_buttons, drv_floors, drv_obstr, drv_stop)
 
 	go peers.PeersUpdate(drv_buttons2, peerUpdateCh, helloRx)
 

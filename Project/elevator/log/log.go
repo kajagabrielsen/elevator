@@ -1,27 +1,41 @@
-package utils
-
+package log
 
 import (
-	"fmt"
 	"Elevator/driver_go_master/elevio"
+	"Elevator/elevator/initialize"
+	"fmt"
 )
 
 // ebToString converts ElevatorBehaviour to a string.
-func EbToString(eb ElevatorBehaviour) string {
+func EbToString(eb initialize.ElevatorBehaviour) string {
 	switch eb {
-	case EB_Idle:
+	case initialize.EB_Idle:
 		return "EB_Idle"
-	case EB_DoorOpen:
+	case initialize.EB_DoorOpen:
 		return "EB_DoorOpen"
-	case EB_Moving:
+	case initialize.EB_Moving:
 		return "EB_Moving"
 	default:
 		return "EB_UNDEFINED"
 	}
 }
 
+// DirnToString converts Direction to a string.
+func DirnToString(d elevio.MotorDirection) string {
+	switch d {
+	case elevio.MDUp:
+		return "D_Up"
+	case elevio.MDDown:
+		return "D_Down"
+	case elevio.MDStop:
+		return "D_Stop"
+	default:
+		return "D_UNDEFINED"
+	}
+}
+
 // elevatorPrint prints the state of the elevator.
-func ElevatorPrint(es Elevator) {
+func ElevatorLog(es initialize.Elevator) {
 	fmt.Println("  +--------------------+")
 	fmt.Printf(
 		"  |floor = %-2d          |\n"+
@@ -33,10 +47,10 @@ func ElevatorPrint(es Elevator) {
 	)
 	fmt.Println("  +--------------------+")
 	fmt.Println("  |  | up  | dn  | cab |")
-	for f := N_FLOORS - 1; f >= 0; f-- {
+	for f := initialize.N_FLOORS - 1; f >= 0; f-- {
 		fmt.Printf("  | %d", f)
-		for btn := 0; btn < N_BUTTONS; btn++ {
-			if (f == N_FLOORS-1 && btn == int(elevio.BTHallUp)) ||
+		for btn := 0; btn < initialize.N_BUTTONS; btn++ {
+			if (f == initialize.N_FLOORS-1 && btn == int(elevio.BTHallUp)) ||
 				(f == 0 && btn == int(elevio.BTHallDown)) {
 				fmt.Print("|     ")
 			} else {
@@ -48,13 +62,13 @@ func ElevatorPrint(es Elevator) {
 	fmt.Println("  +--------------------+")
 }
 
-func ElevatorInitialized() Elevator {
-	return Elevator{
+func ElevatorInitialized() initialize.Elevator {
+	return initialize.Elevator{
 		Floor:     1,
 		Dirn:      elevio.MDStop,
-		Behaviour: EB_Idle,
-		ClearRequestVariant: CV_All,
-		DoorOpenDuration_s:   3.0,
+		Behaviour: initialize.EB_Idle,
+		ClearRequestVariant: initialize.CV_All,
+		DoorOpenDuration:   3.0,
 		ID: "5",
 	}
 }
