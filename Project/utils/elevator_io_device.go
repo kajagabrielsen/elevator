@@ -1,12 +1,8 @@
 package utils
 
 import (
-	"Elevator/driver-go-master/elevio"
+	"Elevator/DriverGoMaster/elevio"
 )
-
-func Init(addr string, numFloors int) {
-	elevio.InitDriver(addr, numFloors)
-}
 
 func WrapRequestButton(floor int, button elevio.ButtonType) bool {
 	return elevio.GetButton(button, floor)

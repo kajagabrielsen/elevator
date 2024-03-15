@@ -1,6 +1,6 @@
 package utils
 
-import "Elevator/driver-go-master/elevio"
+import 	"Elevator/DriverGoMaster/elevio"
 	
 func RequestsAbove(e Elevator) bool {
 	for f := e.Floor + 1; f < N_FLOORS; f++ {

@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"Elevator/driver-go-master/elevio"
+	"Elevator/DriverGoMaster/elevio"
 	"fmt"
 )
 

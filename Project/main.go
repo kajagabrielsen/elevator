@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Elevator/driver-go-master/elevio"
+	"Elevator/DriverGoMaster/elevio"
 	"Elevator/hallassign"
 	"Elevator/networkcom"
 	"Elevator/networkcom/network/bcast"

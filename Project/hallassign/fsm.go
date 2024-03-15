@@ -1,7 +1,7 @@
 package hallassign
 
 import (
-	"Elevator/driver-go-master/elevio"
+	"Elevator/DriverGoMaster/elevio"
 	network "Elevator/networkcom"
 	"Elevator/networkcom/network/listUpdate"
 	"Elevator/utils"
