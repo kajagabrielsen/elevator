@@ -11,8 +11,8 @@ func init() {
 }
 
 const (
-	N_FLOORS = 4
-	N_BUTTONS = 3
+	NFloors = 4
+	NButtons = 3
 )
 
 type ElevatorBehaviour int
@@ -35,7 +35,7 @@ var ElevatorGlob Elevator
 type Elevator struct {
 	Floor                int
 	Dirn                 elevio.MotorDirection
-	Requests             [N_FLOORS][N_BUTTONS]bool
+	Requests             [NFloors][NButtons]bool
 	Behaviour            ElevatorBehaviour
 	ClearRequestVariant  ClearRequestVariantInt
 	DoorOpenDuration   	 float64

@@ -21,7 +21,7 @@ func main() {
 	id_int, _ := strconv.Atoi(id)
 	port := 15656 + id_int
 
-	elevio.InitDriver("localhost:"+strconv.Itoa((port)), initial.N_FLOORS)
+	elevio.InitDriver("localhost:"+strconv.Itoa((port)), initial.NFloors)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)

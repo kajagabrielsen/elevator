@@ -12,8 +12,8 @@ type DirnBehaviourPair struct {
 }
 
 func RequestsAbove(e initial.Elevator) bool {
-	for f := e.Floor + 1; f < initial.N_FLOORS; f++ {
-		for btn := 0; btn < initial.N_BUTTONS; btn++ {
+	for f := e.Floor + 1; f < initial.NFloors; f++ {
+		for btn := 0; btn < initial.NButtons; btn++ {
 			if e.Requests[f][btn] {
 				return true
 			}
@@ -24,7 +24,7 @@ func RequestsAbove(e initial.Elevator) bool {
 
 func RequestsBelow(e initial.Elevator) bool {
 	for f := 0; f < e.Floor; f++ {
-		for btn := 0; btn < initial.N_BUTTONS; btn++ {
+		for btn := 0; btn < initial.NButtons; btn++ {
 			if e.Requests[f][btn] {
 				return true
 			}
@@ -34,7 +34,7 @@ func RequestsBelow(e initial.Elevator) bool {
 }
 
 func RequestsHere(e initial.Elevator) bool {
-	for btn := 0; btn < initial.N_BUTTONS; btn++ {
+	for btn := 0; btn < initial.NButtons; btn++ {
 		if e.Requests[e.Floor][btn] {
 			return true
 		}
@@ -114,7 +114,7 @@ func RequestsShouldClearImmediately(e initial.Elevator, btnFloor int, btnType el
 func RequestsClearAtCurrentFloor(e initial.Elevator) initial.Elevator {
 	switch e.ClearRequestVariant {
 	case initial.CV_All:
-		for btn := 0; btn < initial.N_BUTTONS; btn++ {
+		for btn := 0; btn < initial.NButtons; btn++ {
 			e.Requests[e.Floor][btn] = false
 		}
 	case initial.CV_InDirn:

@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-var GlobalHallCalls = [initial.N_FLOORS][2]bool{}
+var GlobalHallCalls = [initial.NFloors][2]bool{}
 
 func ButtonToString(b elevio.ButtonType) string {
 	switch b {
@@ -24,14 +24,14 @@ func ButtonToString(b elevio.ButtonType) string {
 }
 
 func SetAllLights(es initial.Elevator) {
-	for floor := 0; floor < initial.N_FLOORS; floor++ {
-		for btn := 0; btn < initial.N_BUTTONS-1; btn++ {
+	for floor := 0; floor < initial.NFloors; floor++ {
+		for btn := 0; btn < initial.NButtons-1; btn++ {
 			var B elevio.ButtonType = elevio.ButtonType(btn)
 			initial.OutputDevice.RequestButtonLight(floor, B, GlobalHallCalls[floor][btn])
 		}
 	}
 
-	for f := 0; f < initial.N_FLOORS; f++ {
+	for f := 0; f < initial.NFloors; f++ {
 		var b elevio.ButtonType = elevio.ButtonType(2)
 		initial.OutputDevice.RequestButtonLight(f, b, es.Requests[f][2])
 	}

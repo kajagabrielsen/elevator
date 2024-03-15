@@ -47,10 +47,10 @@ func ElevatorLog(es initial.Elevator) {
 	)
 	fmt.Println("  +--------------------+")
 	fmt.Println("  |  | up  | dn  | cab |")
-	for f := initial.N_FLOORS - 1; f >= 0; f-- {
+	for f := initial.NFloors - 1; f >= 0; f-- {
 		fmt.Printf("  | %d", f)
-		for btn := 0; btn < initial.N_BUTTONS; btn++ {
-			if (f == initial.N_FLOORS-1 && btn == int(elevio.BTHallUp)) ||
+		for btn := 0; btn < initial.NButtons; btn++ {
+			if (f == initial.NFloors-1 && btn == int(elevio.BTHallUp)) ||
 				(f == 0 && btn == int(elevio.BTHallDown)) {
 				fmt.Print("|     ")
 			} else {

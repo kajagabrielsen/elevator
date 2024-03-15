@@ -10,7 +10,7 @@ import (
 	"runtime"
 )
 
-func CalculateCostFunc(elevators []initial.Elevator) map[string][initial.N_FLOORS][2]bool {
+func CalculateCostFunc(elevators []initial.Elevator) map[string][initial.NFloors][2]bool {
 
 	hraExecutable := ""
 	switch runtime.GOOS {
@@ -68,7 +68,7 @@ func CalculateCostFunc(elevators []initial.Elevator) map[string][initial.N_FLOOR
 	}
 
 	//convert the json received from hall_request_assigner to output
-	output := make(map[string][initial.N_FLOORS][2]bool)
+	output := make(map[string][initial.NFloors][2]bool)
 	err = json.Unmarshal(ret, &output)
 	if err != nil {
 		fmt.Println("json.Unmarshal error: ", err)
