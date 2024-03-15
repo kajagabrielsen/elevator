@@ -1,31 +1,14 @@
-package hallassign
+package motorstop
 
-import (
+import(
 	"Elevator/elevator/initialize"
-	"Elevator/network/list"
 	"time"
 )
-
-var OneElevRequests = [initialize.N_FLOORS][initialize.N_BUTTONS]bool{}
-
 var PrevElevatorRequests [initialize.N_FLOORS][initialize.N_BUTTONS]bool
 
 var Stopped bool
 
 var NoChangeInRequestsTimer int
-
-func AssignHallRequest() {
-	AssignedHallCalls := CalculateCostFunc(list.ListOfElevators)
-	OneElevCabCalls,_ := GetCabCalls(initialize.ElevatorGlob)
-	OneElevHallCalls := AssignedHallCalls[initialize.ElevatorGlob.ID]
-
-	for floor := 0; floor < initialize.N_FLOORS; floor++ {
-		OneElevRequests[floor][0] = OneElevHallCalls[floor][0]
-		OneElevRequests[floor][1] = OneElevHallCalls[floor][1]
-		OneElevRequests[floor][2] = OneElevCabCalls[floor]
-	}
-	
-}
 
 func DetectMotorStop(){
     for{

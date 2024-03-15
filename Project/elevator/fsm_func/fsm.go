@@ -11,7 +11,6 @@ import (
 
 var GlobalHallCalls = [initialize.N_FLOORS][2]bool{}
 
-// ButtonToString converts Button to a string.
 func ButtonToString(b elevio.ButtonType) string {
 	switch b {
 	case elevio.BTHallUp:
@@ -63,8 +62,6 @@ func FsmOnRequestButtonPress(btnFloor int, btnType elevio.ButtonType) {
 
 	case initialize.EB_Idle:
 		initialize.ElevatorGlob.Requests[btnFloor][btnType] = true
-		//la til den under (gjør at lyset ikke blinker)
-		//ElevatorGlob = RequestsClearAtCurrentFloor(ElevatorGlob)
 		pair := request.RequestsChooseDirection(initialize.ElevatorGlob)
 		initialize.ElevatorGlob.Dirn = pair.Dirn
 		initialize.ElevatorGlob.Behaviour = pair.Behaviour
@@ -113,7 +110,6 @@ func FsmOnFloorArrival(newFloor int, elevators []initialize.Elevator) {
 	fmt.Println("\nNew state:")
 	log.ElevatorLog(initialize.ElevatorGlob)
 
-	//la til denne under
 	for _,elev := range elevators {
 		if elev.ID == initialize.ElevatorGlob.ID {
 			elev.Requests = initialize.ElevatorGlob.Requests

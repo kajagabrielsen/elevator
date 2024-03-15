@@ -4,7 +4,9 @@ import (
 	"Elevator/driver_go_master/elevio"
 	"Elevator/elevator/initialize"
 	"Elevator/elevator/fsm_func"
-	"Elevator/hallassign"
+	"Elevator/hallassign/fsm_implementation"
+	"Elevator/hallassign/motor_stop"
+	"Elevator/hallassign/call_handling"
 	"Elevator/network/bcast"
 	"Elevator/network/peers"
 	"fmt"
@@ -58,7 +60,7 @@ func main() {
 	// The example message. We just send one of these every second.
 	go func() {
 		initialize.ElevatorGlob.ID = id
-		OneElevCabCalls, _ := hallassign.GetCabCalls(initialize.ElevatorGlob)
+		OneElevCabCalls, _ := call.GetCabCalls(initialize.ElevatorGlob)
 		for i := range initialize.ElevatorGlob.Requests{
 			initialize.ElevatorGlob.Requests[i][2] = OneElevCabCalls[i]
 		}
@@ -76,9 +78,9 @@ func main() {
 	}()
 	fmt.Println("Started")
 
-	go hallassign.DetectMotorStop()
+	go motorstop.DetectMotorStop()
 
-	go hallassign.FSM(drv_buttons, drv_floors, drv_obstr, drv_stop)
+	go implfsm.FSM(drv_buttons, drv_floors, drv_obstr, drv_stop)
 
 	go peers.PeersUpdate(drv_buttons2, peerUpdateCh, helloRx)
 
