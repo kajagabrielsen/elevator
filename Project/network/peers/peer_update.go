@@ -9,10 +9,6 @@ import (
 	"fmt"
 )
 
-var DeadElevatorsID []string
-
-var AliveElevatorsID []string
-
 type HelloMsg struct {
 	Elevator initial.Elevator
 	Iter     int
@@ -27,11 +23,9 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			fmt.Printf("  Peers:    %q\n", p.Peers)
 			fmt.Printf("  New:      %q\n", p.New)
 			fmt.Printf("  Lost:     %q\n", p.Lost)
-			AliveElevatorsID = p.Peers
-			DeadElevatorsID = p.Lost
 			call.UpdateGlobalHallCalls(list.ListOfElevators)
 
-			for _, deadID := range DeadElevatorsID {
+			for _, deadID := range p.Lost {
 				list.RemoveFromListOfElevators(list.ListOfElevators,deadID)
 			}
 			assign.AssignHallRequest()
