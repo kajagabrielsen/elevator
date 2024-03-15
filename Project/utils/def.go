@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"Elevator/DriverGoMaster/elevio"
+	"Elevator/driver_go_master/elevio"
 )
 
 // Configuration values

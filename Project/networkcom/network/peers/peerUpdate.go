@@ -1,7 +1,7 @@
 package peers
 
 import (
-	"Elevator/DriverGoMaster/elevio"
+	"Elevator/driver_go_master/elevio"
 	"Elevator/hallassign"
 	"Elevator/networkcom"
 	"Elevator/networkcom/network/listUpdate"

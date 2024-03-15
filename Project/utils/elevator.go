@@ -3,7 +3,7 @@ package utils
 
 import (
 	"fmt"
-	"Elevator/DriverGoMaster/elevio"
+	"Elevator/driver_go_master/elevio"
 )
 
 // ebToString converts ElevatorBehaviour to a string.

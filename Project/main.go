@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Elevator/DriverGoMaster/elevio"
+	"Elevator/driver_go_master/elevio"
 	"Elevator/hallassign"
 	"Elevator/networkcom"
 	"Elevator/networkcom/network/bcast"
@@ -59,7 +59,7 @@ func main() {
 	go func() {
 		utils.ElevatorGlob.ID = id
 		OneElevCabCalls, _ := hallassign.GetCabCalls(utils.ElevatorGlob)
-		for i, _ := range utils.ElevatorGlob.Requests{
+		for i := range utils.ElevatorGlob.Requests{
 			utils.ElevatorGlob.Requests[i][2] = OneElevCabCalls[i]
 		}
 		e := utils.ElevatorGlob
