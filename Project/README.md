@@ -3,8 +3,11 @@ We have chosen to go with a peer-to-peer logic for our elevators. <br/>
 
 ## How start the elevators:
 
-To start the elevator write ```go run main.go *ID*``` in the terminal window. <br/>
-The *ID* you choose should be unique for every elevator you want to run together. <br/>
+To initiate the elevator write the following in the terminal window
+```sh
+go run main.go ID
+```
+The **ID** you choose should be a unique integer for every elevator you want to run together. <br/>
 
 ## General description of code:
 The program contains four folders and a main file. These four folders are: <br/>
