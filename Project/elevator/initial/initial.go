@@ -23,13 +23,6 @@ const (
 	EBMoving
 )
 
-type ClearRequestVariantInt int
-
-const (
-	CV_All ClearRequestVariantInt = iota
-	CV_InDirn
-)
-
 var ElevatorGlob Elevator
 
 type Elevator struct {
@@ -37,7 +30,6 @@ type Elevator struct {
 	Dirn                 elevio.MotorDirection
 	Requests             [NFloors][NButtons]bool
 	Behaviour            ElevatorBehaviour
-	ClearRequestVariant  ClearRequestVariantInt
 	DoorOpenDuration   	 float64
 	ID                   string
 	Obstructed           bool
@@ -60,7 +52,6 @@ func ElevatorInitialized() Elevator {
 		Floor:     			   1,
 		Dirn:      			   elevio.MDStop,
 		Behaviour:		   	   EBIdle,
-		ClearRequestVariant:   CV_All,
 		DoorOpenDuration:      3.0,
 		ID:					   "0",
 	}
