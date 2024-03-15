@@ -12,9 +12,9 @@ import (
 )
 
 func FSM(drv_buttons   chan elevio.ButtonEvent, 
-		drv_floors    chan int, 
-		drv_obstr 	  chan bool, 
-		drv_stop      chan bool) {
+		 drv_floors    chan int, 
+		 drv_obstr 	   chan bool, 
+		 drv_stop      chan bool) {
 	for {
 		select {
 		case E := <-drv_buttons:
@@ -22,10 +22,12 @@ func FSM(drv_buttons   chan elevio.ButtonEvent,
 			initial.ElevatorGlob.Requests[E.Floor][E.Button] = true
 			call.UpdateCabCalls(initial.ElevatorGlob.Requests)
 			call.UpdateGlobalHallCalls(list.ListOfElevators)
+
 		case F := <-drv_floors:
 			fsm.FsmOnFloorArrival(F, list.ListOfElevators)
 			call.UpdateCabCalls(initial.ElevatorGlob.Requests)
 			call.UpdateGlobalHallCalls(list.ListOfElevators)
+
 		case a := <-drv_obstr:
 			fmt.Printf("%+v\n", a)
 			if a {
@@ -45,10 +47,12 @@ func FSM(drv_buttons   chan elevio.ButtonEvent,
 			}else{
 				elevio.SetMotorDirection(elevio.MotorDirection(initial.ElevatorGlob.Dirn))
 			}
+
 		case <-time.After(time.Millisecond * time.Duration(initial.ElevatorGlob.DoorOpenDuration*1000)):
 			fsm.FsmOnDoorTimeout()
 			call.UpdateGlobalHallCalls(list.ListOfElevators)
 		}
+		
 		fsm.SetAllLights(initial.ElevatorGlob)
 		for floor_num, floor := range assign.OneElevRequests {
 			for btn_num := range floor {

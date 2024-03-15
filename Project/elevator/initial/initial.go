@@ -69,7 +69,6 @@ func WrapMotorDirection(direction elevio.MotorDirection) {
 	elevio.SetMotorDirection(direction)
 }
 
-// GetOutputDevice returns the elevator's output device.
 func GetOutputDevice() ElevOutputDevice {
 	return ElevOutputDevice{
 		FloorIndicator:     elevio.SetFloorIndicator,

@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// ebToString converts ElevatorBehaviour to a string.
+
 func EbToString(eb initial.ElevatorBehaviour) string {
 	switch eb {
 	case initial.EBIdle:
@@ -20,7 +20,6 @@ func EbToString(eb initial.ElevatorBehaviour) string {
 	}
 }
 
-// DirnToString converts Direction to a string.
 func DirnToString(d elevio.MotorDirection) string {
 	switch d {
 	case elevio.MDUp:

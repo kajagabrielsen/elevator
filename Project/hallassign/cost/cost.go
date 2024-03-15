@@ -54,20 +54,17 @@ func CalculateCostFunc(elevators []initial.Elevator) map[string][initial.NFloors
 		}
 	}
 
-	//Convert input to json format
 	jsonBytes, err := json.Marshal(input)
 	if err != nil {
 		fmt.Println("json.Marshal error: ", err)
 	}
 
-	//runds the hall_request_assigner file
 	ret, err := exec.Command( hraExecutable, "-i", string(jsonBytes)).CombinedOutput()
 	if err != nil {
 		fmt.Println("exec.Command error: ", err)
 		fmt.Println(string(ret))
 	}
 
-	//convert the json received from hall_request_assigner to output
 	output := make(map[string][initial.NFloors][2]bool)
 	err = json.Unmarshal(ret, &output)
 	if err != nil {

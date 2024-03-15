@@ -4,6 +4,7 @@ import (
 	"Elevator/elevator/initial"
 )
 
+// ListOfElevators holds all elevators available to take hall calls
 var ListOfElevators []initial.Elevator
 
 func RemoveFromListOfElevators(list []initial.Elevator, id string) {
@@ -29,7 +30,7 @@ func AddToListOfElevators(list []initial.Elevator, elevator initial.Elevator) {
 			found = true
 		}
 	}
-	if !found && !elevator.Obstructed {
+	if !found && !elevator.Obstructed{
 		list = append(list, elevator)
 	}
 	ListOfElevators = list

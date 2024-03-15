@@ -3,7 +3,11 @@ package motorstop
 import (
 	"Elevator/elevator/initial"
 	"time"
+
 )
+
+//Complete implementation of another elevator taking over the hall call of an elevator with motorstop was not succsessfully finished
+
 var PrevElevatorRequests [initial.NFloors][initial.NButtons]bool
 
 var Stopped bool
@@ -21,7 +25,7 @@ func DetectMotorStop(){
             }
         }
     }
-    if NoChangeInRequestsTimer > 3 {
+    if NoChangeInRequestsTimer > 3 { 
         Stopped = true
     }else {
         Stopped = false
