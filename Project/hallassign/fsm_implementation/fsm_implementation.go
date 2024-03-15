@@ -30,10 +30,12 @@ func FSM(drv_buttons   chan elevio.ButtonEvent,
 			fmt.Printf("%+v\n", a)
 			if a {
 				initial.ElevatorGlob.Obstructed = true
-				list.RemoveFromListOfElevators(list.ListOfElevators, initial.ElevatorGlob)
+				call.UpdateGlobalHallCalls(list.ListOfElevators)
+				list.RemoveFromListOfElevators(list.ListOfElevators, initial.ElevatorGlob.ID)
 
 			} else {
 				initial.ElevatorGlob.Obstructed = false
+				call.UpdateGlobalHallCalls(list.ListOfElevators)
 				list.AddToListOfElevators(list.ListOfElevators, initial.ElevatorGlob)
 
 			}

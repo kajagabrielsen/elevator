@@ -3,8 +3,8 @@ package peers
 import (
 	"Elevator/driver_go_master/elevio"
 	"Elevator/elevator/initial"
-	assign "Elevator/hallassign/assign_hall_request"
-	call "Elevator/hallassign/call_handling"
+	"Elevator/hallassign/assign_hall_request"
+	"Elevator/hallassign/call_handling"
 	"Elevator/network/list"
 	"fmt"
 )
@@ -31,44 +31,19 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			DeadElevatorsID = p.Lost
 			call.UpdateGlobalHallCalls(list.ListOfElevators)
 
-			//fjerner lost peers fra ListOfElevators
-			var result []initial.Elevator
-
-			for _, elevator := range list.ListOfElevators {
-				found := false
-
-				for _, deadID := range DeadElevatorsID {
-					if elevator.ID == deadID {
-						found = true
-					}
-				}
-
-				if !found {
-					result = append(result, elevator)
-				}
+			for _, deadID := range DeadElevatorsID {
+				list.RemoveFromListOfElevators(list.ListOfElevators,deadID)
 			}
-			list.ListOfElevators = result
 			assign.AssignHallRequest()
 
 		case elev := <-helloRx:
 
 			if elev.Elevator.Obstructed {
-				list.RemoveFromListOfElevators(list.ListOfElevators, elev.Elevator)
+				list.RemoveFromListOfElevators(list.ListOfElevators, elev.Elevator.ID)
 			}
 
+			list.AddToListOfElevators(list.ListOfElevators,elev.Elevator)
 
-			flag := 0
-			for i, element := range list.ListOfElevators {
-				if element.ID == elev.Elevator.ID {
-					list.ListOfElevators[i] = elev.Elevator
-					flag = 1
-				}
-			}
-			if flag == 0 && !elev.Elevator.Obstructed{
-				list.ListOfElevators = append(list.ListOfElevators, elev.Elevator)				
-			}
-
-			fmt.Printf("Received: %#v\n", elev)
 		case btn := <-drv_buttons:
 			initial.ElevatorGlob.Requests[btn.Floor][btn.Button] = true
 		}
