@@ -1,4 +1,4 @@
-package initialize
+package initial
 
 import (
 	"Elevator/driver_go_master/elevio"
@@ -18,9 +18,9 @@ const (
 type ElevatorBehaviour int
 
 const (
-	EB_Idle ElevatorBehaviour = iota
-	EB_DoorOpen
-	EB_Moving
+	EBIdle ElevatorBehaviour = iota
+	EBDoorOpen
+	EBMoving
 )
 
 type ClearRequestVariantInt int
@@ -59,10 +59,10 @@ func ElevatorInitialized() Elevator {
 	return Elevator{
 		Floor:     1,
 		Dirn:      elevio.MDStop,
-		Behaviour: EB_Idle,
+		Behaviour: EBIdle,
 		ClearRequestVariant: CV_All,
 		DoorOpenDuration:   3.0,
-		ID: "5",
+		ID: "0",
 	}
 }
 

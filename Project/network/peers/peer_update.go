@@ -2,9 +2,9 @@ package peers
 
 import (
 	"Elevator/driver_go_master/elevio"
-	"Elevator/elevator/initialize"
-	"Elevator/hallassign/call_handling"
-	"Elevator/hallassign/assign_hall_request"
+	"Elevator/elevator/initial"
+	assign "Elevator/hallassign/assign_hall_request"
+	call "Elevator/hallassign/call_handling"
 	"Elevator/network/list"
 	"fmt"
 )
@@ -14,7 +14,7 @@ var DeadElevatorsID []string
 var AliveElevatorsID []string
 
 type HelloMsg struct {
-	Elevator initialize.Elevator
+	Elevator initial.Elevator
 	Iter     int
 }
 
@@ -32,7 +32,7 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 			call.UpdateGlobalHallCalls(list.ListOfElevators)
 
 			//fjerner lost peers fra ListOfElevators
-			var result []initialize.Elevator
+			var result []initial.Elevator
 
 			for _, elevator := range list.ListOfElevators {
 				found := false
@@ -70,7 +70,7 @@ func PeersUpdate(drv_buttons chan elevio.ButtonEvent, peerUpdateCh chan PeerUpda
 
 			fmt.Printf("Received: %#v\n", elev)
 		case btn := <-drv_buttons:
-			initialize.ElevatorGlob.Requests[btn.Floor][btn.Button] = true
+			initial.ElevatorGlob.Requests[btn.Floor][btn.Button] = true
 		}
 	}
 

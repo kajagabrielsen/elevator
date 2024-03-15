@@ -2,11 +2,11 @@ package main
 
 import (
 	"Elevator/driver_go_master/elevio"
-	"Elevator/elevator/initialize"
-	"Elevator/elevator/fsm_func"
-	"Elevator/hallassign/fsm_implementation"
-	"Elevator/hallassign/motor_stop"
-	"Elevator/hallassign/call_handling"
+	fsm "Elevator/elevator/fsm_func"
+	"Elevator/elevator/initial"
+	call "Elevator/hallassign/call_handling"
+	implfsm "Elevator/hallassign/fsm_implementation"
+	motorstop "Elevator/hallassign/motor_stop"
 	"Elevator/network/bcast"
 	"Elevator/network/peers"
 	"fmt"
@@ -21,7 +21,7 @@ func main() {
 	id_int, _ := strconv.Atoi(id)
 	port := 15656 + id_int
 
-	elevio.InitDriver("localhost:"+strconv.Itoa((port)), initialize.N_FLOORS)
+	elevio.InitDriver("localhost:"+strconv.Itoa((port)), initial.N_FLOORS)
 
 	drv_buttons := make(chan elevio.ButtonEvent)
 	drv_floors := make(chan int)
@@ -59,18 +59,18 @@ func main() {
 
 	// The example message. We just send one of these every second.
 	go func() {
-		initialize.ElevatorGlob.ID = id
-		OneElevCabCalls, _ := call.GetCabCalls(initialize.ElevatorGlob)
-		for i := range initialize.ElevatorGlob.Requests{
-			initialize.ElevatorGlob.Requests[i][2] = OneElevCabCalls[i]
+		initial.ElevatorGlob.ID = id
+		OneElevCabCalls, _ := call.GetCabCalls(initial.ElevatorGlob)
+		for i := range initial.ElevatorGlob.Requests{
+			initial.ElevatorGlob.Requests[i][2] = OneElevCabCalls[i]
 		}
-		e := initialize.ElevatorGlob
+		e := initial.ElevatorGlob
 		helloMsg := peers.HelloMsg{
 			Elevator: e,
 			Iter:     0,
 		}
 		for {
-			helloMsg.Elevator = initialize.ElevatorGlob
+			helloMsg.Elevator = initial.ElevatorGlob
 			helloTx <- helloMsg
 			helloMsg.Iter++
 			time.Sleep(1 * time.Second)

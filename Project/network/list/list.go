@@ -1,14 +1,14 @@
 package list
 
 import (
-	"Elevator/elevator/initialize"
+	"Elevator/elevator/initial"
 )
 
-var ListOfElevators []initialize.Elevator
+var ListOfElevators []initial.Elevator
 
 //tar inn en liste av heiser og en heis, fjerner heisen fra lista og oppdaterer
-func RemoveFromListOfElevators(list []initialize.Elevator, elevator initialize.Elevator) {
-	var updatedList []initialize.Elevator
+func RemoveFromListOfElevators(list []initial.Elevator, elevator initial.Elevator) {
+	var updatedList []initial.Elevator
 
 	for _, elev := range list {
 		found := false
@@ -25,7 +25,7 @@ func RemoveFromListOfElevators(list []initialize.Elevator, elevator initialize.E
 
 //tar inn en liste av heiser og en heis, legger til heisen i lista dersom den ikke finnes fra før og ikke er Obstructed
 //oppdaterer den i lista dersom den finnes fra før
-func AddToListOfElevators(list []initialize.Elevator, elevator initialize.Elevator) {
+func AddToListOfElevators(list []initial.Elevator, elevator initial.Elevator) {
 
 	flag := false
 	for i, elev := range list {
