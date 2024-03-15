@@ -44,12 +44,12 @@ func SetAllLights(es Elevator) {
 
 
 func FsmOnInitBetweenFloors() {
-	outputDevice.MotorDirection(elevio.MD_Down)
-	ElevatorGlob.Dirn = D_Down
+	outputDevice.MotorDirection(elevio.MDDown)
+	ElevatorGlob.Dirn = elevio.MDDown
 	ElevatorGlob.Behaviour = EB_Moving
 }
 
-func FsmOnRequestButtonPress(btnFloor int, btnType Button) {
+func FsmOnRequestButtonPress(btnFloor int, btnType elevio.ButtonType) {
 	fmt.Printf("\n\n%s(%d, %s)\n", "fsmOnRequestButtonPress", btnFloor, ButtonToString(btnType))
 	ElevatorPrint(ElevatorGlob)
 
@@ -102,7 +102,7 @@ func FsmOnFloorArrival(newFloor int, elevators []Elevator) {
 	switch ElevatorGlob.Behaviour {
 	case EB_Moving:
 		if RequestsShouldStop(ElevatorGlob) {
-			outputDevice.MotorDirection(D_Stop)
+			outputDevice.MotorDirection(elevio.MDStop)
 			outputDevice.DoorLight(true)
 			ElevatorGlob = RequestsClearAtCurrentFloor(ElevatorGlob)
 			TimerStart(ElevatorGlob.DoorOpenDuration_s)

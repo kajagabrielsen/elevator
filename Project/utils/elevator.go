@@ -1,7 +1,9 @@
 package utils
 
+
 import (
 	"fmt"
+	"Elevator/driver-go-master/elevio"
 )
 
 // ebToString converts ElevatorBehaviour to a string.
@@ -34,8 +36,8 @@ func ElevatorPrint(es Elevator) {
 	for f := N_FLOORS - 1; f >= 0; f-- {
 		fmt.Printf("  | %d", f)
 		for btn := 0; btn < N_BUTTONS; btn++ {
-			if (f == N_FLOORS-1 && btn == int(B_HallUp)) ||
-				(f == 0 && btn == int(B_HallDown)) {
+			if (f == N_FLOORS-1 && btn == int(elevio.BTHallUp)) ||
+				(f == 0 && btn == int(elevio.BTHallDown)) {
 				fmt.Print("|     ")
 			} else {
 				fmt.Print("|", es.Requests[f][btn])
@@ -49,7 +51,7 @@ func ElevatorPrint(es Elevator) {
 func ElevatorInitialized() Elevator {
 	return Elevator{
 		Floor:     1,
-		Dirn:      D_Stop,
+		Dirn:      elevio.MDStop,
 		Behaviour: EB_Idle,
 		ClearRequestVariant: CV_All,
 		DoorOpenDuration_s:   3.0,

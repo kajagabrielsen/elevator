@@ -1,12 +1,13 @@
 package hallassign
 
 import (
+	"Elevator/driver-go-master/elevio"
 	"Elevator/utils"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
-	"os"
 )
 
 // Struct members must be public in order to be accessible by json.Marshal/.Unmarshal
@@ -24,7 +25,7 @@ type HRAElevStatetemp struct {
 	ElevID      string                     `json:"id"`
 	Behaviour   utils.ElevatorBehaviour `json:"behaviour"`
 	Floor       int                     `json:"floor"`
-	Direction   utils.Dirn              `json:"direction"`
+	Direction   elevio.MotorDirection              `json:"direction"`
 	CabRequests [utils.N_FLOORS]bool    `json:"cabRequests"`
 }
 

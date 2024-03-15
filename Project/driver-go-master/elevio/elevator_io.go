@@ -14,22 +14,20 @@ var _numFloors int = 4
 var _mtx sync.Mutex
 var _conn net.Conn
 
-
-
 type MotorDirection int
 
 const (
-	MD_Up   MotorDirection = 1
-	MD_Down                = -1
-	MD_Stop                = 0
+	MDUp   MotorDirection = 1
+	MDDown                = -1
+	MDStop                = 0
 )
 
 type ButtonType int
 
 const (
-	BT_HallUp   ButtonType = 0
-	BT_HallDown            = 1
-	BT_Cab                 = 2
+	BTHallUp   ButtonType = 0
+	BTHallDown            = 1
+	BTCab                 = 2
 )
 
 type ButtonEvent struct {
@@ -37,7 +35,7 @@ type ButtonEvent struct {
 	Button ButtonType
 }
 
-func Init(addr string, numFloors int) {
+func InitDriver(addr string, numFloors int) {
 	if _initialized {
 		fmt.Println("Driver already initialized!")
 		return

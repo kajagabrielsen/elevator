@@ -2,7 +2,7 @@ package hallassign
 
 import (
 	"Elevator/driver-go-master/elevio"
-	"Elevator/networkcom"
+	network "Elevator/networkcom"
 	"Elevator/networkcom/network/listUpdate"
 	"Elevator/utils"
 	"fmt"
@@ -35,10 +35,9 @@ func FSM(HelloRx  chan network.HelloMsg,
 				listUpdate.AddToListOfElevators(network.ListOfElevators, utils.ElevatorGlob)
 
 			}
-
 		case a := <-drv_stop:
 			if a{
-				elevio.SetMotorDirection(elevio.MD_Stop)
+				elevio.SetMotorDirection(elevio.MDStop)
 			}else{
 				elevio.SetMotorDirection(elevio.MotorDirection(utils.ElevatorGlob.Dirn))
 			}
@@ -50,7 +49,7 @@ func FSM(HelloRx  chan network.HelloMsg,
 		for floor_num, floor := range OneElevRequests {
 			for btn_num := range floor {
 				if OneElevRequests[floor_num][btn_num] {
-					utils.FsmOnRequestButtonPress(floor_num, utils.Button(btn_num))
+					utils.FsmOnRequestButtonPress(floor_num, elevio.ButtonType(btn_num))
 				}
 			}
 		}
