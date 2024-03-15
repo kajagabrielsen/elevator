@@ -39,8 +39,8 @@ func FSM(drv_buttons   chan elevio.ButtonEvent,
 				initial.ElevatorGlob.Obstructed = false
 				call.UpdateGlobalHallCalls(list.ListOfElevators)
 				list.AddToListOfElevators(list.ListOfElevators, initial.ElevatorGlob)
-
 			}
+			
 		case a := <-drv_stop:
 			if a{
 				elevio.SetMotorDirection(elevio.MDStop)
@@ -52,7 +52,7 @@ func FSM(drv_buttons   chan elevio.ButtonEvent,
 			fsm.FsmOnDoorTimeout()
 			call.UpdateGlobalHallCalls(list.ListOfElevators)
 		}
-		
+
 		fsm.SetAllLights(initial.ElevatorGlob)
 		for floor_num, floor := range assign.OneElevRequests {
 			for btn_num := range floor {
