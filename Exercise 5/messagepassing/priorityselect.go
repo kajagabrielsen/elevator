@@ -37,18 +37,24 @@ type Resource struct {
 
 func resourceManager(takeLow chan Resource, takeHigh chan Resource, giveBack chan Resource){
 
-    res := Resource{}
+    var res Resource
+    var busy bool
     
     for {
         select {
         case takeHigh<- res:
-            //fmt.Printf("[resource manager]: resource taken (high)\n")
-        case takeLow<- res:
-            //fmt.Printf("[resource manager]: resource taken (low)\n")
-        case res = <-giveBack:
-            //fmt.Printf("[resource manager]: resource returned\n")
+            res, busy = <- giveBack
+            if !busy {return}
+        default:
+            select{
+            case takeLow <- res:
+                res, busy =<- giveBack
+                if !busy {return}
+            case res = <- giveBack:
+            
+            }
         }
-    }
+    }   
 }
     
 
